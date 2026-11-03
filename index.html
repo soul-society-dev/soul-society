@@ -42,6 +42,9 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.4rem);margin-bottom:8px}
 .soc h3{font-size:1.1rem}.soc p{margin:0;color:var(--muted);font-size:.93rem;flex:1}
 .badge{align-self:flex-start;font-size:.8rem;font-weight:700;border:1px solid var(--c);color:var(--c);padding:1px 8px;border-radius:99px}
 .soc.locked{opacity:.92;border-style:dashed}
+a.soc{text-decoration:none;color:inherit}a.soc:hover{border-color:var(--c)}.soc .go{font-weight:700;color:var(--c);font-size:.9rem}
+.feedlist{display:grid;gap:10px}.fi{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);padding:12px 16px;text-decoration:none;color:inherit}
+.fi:hover{border-color:var(--c)}.fi b{display:block}.fi span{color:var(--muted);font-size:.92rem}
 .events{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
 .ev{background:var(--card);border:1px solid var(--line);padding:18px}
 .ev .d{font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;font-size:1.5rem;color:var(--red)}
@@ -83,7 +86,7 @@ footer{padding:24px 18px 36px;text-align:center;color:var(--muted);font-size:.85
 <body>
 <header class="top"><div class="wrap">
   <a class="logo" href="#top">Soul Society</a>
-  <nav aria-label="Main"><a href="#about">About</a><a href="#societies">Societies</a><a href="#events">Events</a><a href="#entertainment">Entertainment</a><a href="#join">Join</a></nav>
+  <nav aria-label="Main"><a href="#about">About</a><a href="#societies">Societies</a><a href="#feed">Activity</a><a href="#events">Events</a><a href="#entertainment">Entertainment</a><a href="#join">Join</a></nav>
 </div></header>
 
 <main id="top">
@@ -117,6 +120,12 @@ footer{padding:24px 18px 36px;text-align:center;color:var(--muted);font-size:.85
   <h2>Society Directory</h2>
   <p class="sub">Every society has its own personality and activities. Pick the ones that fit you.</p>
   <div class="grid" id="socGrid"></div>
+</div></section>
+
+<section id="feed"><div class="wrap">
+  <h2>Activity feed</h2>
+  <p class="sub">One place to see what is happening across the societies. These are sample updates for now. Live updates arrive with member accounts.</p>
+  <div class="feedlist" id="feedList"></div>
 </div></section>
 
 <section id="events"><div class="wrap">
@@ -169,7 +178,10 @@ const S=[
  ["Music Society","Recommendations, artists and karaoke sessions.","#FF6FAE"],
  ["MMM Society","Manga, manhwa and manhua: lists, reviews, chapter talk.","#4DD0C4"]
 ];
-document.getElementById("socGrid").innerHTML=S.map(s=>`<div class="soc${s[3]?" locked":""}" style="--c:${s[2]}"><h3>${s[0]}</h3><p>${s[1]}</p>${s[3]?'<span class="badge">Age-restricted</span>':""}</div>`).join("");
+const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+document.getElementById("socGrid").innerHTML=S.map(s=>`<a class="soc${s[3]?" locked":""}" style="--c:${s[2]}" href="society.html?s=${slug(s[0])}"><h3>${s[0]}</h3><p>${s[1]}</p>${s[3]?'<span class="badge">Age-restricted</span>':""}<span class="go">Enter society</span></a>`).join("");
+const F=[["Anime Hub","New anime recommendation posted."],["Gamers Society","A multiplayer room is open."],["Music Society","Karaoke begins Saturday."],["SS Battle Ground","Gojo vs Sukuna voting is underway."],["MMM Society","New reading challenge announced."]];
+document.getElementById("feedList").innerHTML=F.map(f=>{const c=S.find(s=>s[0]===f[0])[2];return `<a class="fi" style="--c:${c}" href="society.html?s=${slug(f[0])}"><div><b>${f[0]}</b><span>${f[1]}</span></div></a>`}).join("");
 const K="ss-battle";let v={a:128,b:116,pick:null};
 try{const x=localStorage.getItem(K);if(x)v=JSON.parse(x)}catch(e){}
 function draw(){

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Society – Soul Society</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Shippori+Mincho+B1:wght@800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF1F8;--ink:#12152A;--card:#fff;--muted:#4F5575;--line:#C9CFE3;--c:#1E7FCB;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45}}
+:root[data-theme="dark"]{--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;line-height:1.6}
+h1,h2,h3{font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;line-height:1.15;margin:0}
+a{color:inherit}:focus-visible{outline:3px solid var(--c);outline-offset:3px}
+.top{background:#0A0C16;color:#E9ECF5;border-bottom:1px solid #262B45}
+.wrap{max-width:900px;margin:0 auto;padding:0 18px}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;padding-top:12px;padding-bottom:12px;gap:12px}
+.logo{font-family:"Cinzel Decorative",Georgia,serif;font-weight:900;font-size:1.05rem;text-decoration:none;letter-spacing:.08em}
+.top a.back{color:#A0A7C4;text-decoration:none;font-size:.92rem}
+.head{background:#0A0C16;color:#E9ECF5;border-bottom:6px solid var(--c);padding:40px 0 34px}
+.head h1{font-family:"Cinzel Decorative",Georgia,serif;font-weight:900;font-size:clamp(1.8rem,7vw,3.2rem);letter-spacing:.04em;margin-bottom:8px}
+.head p{color:#C9CFE3;margin:0 0 18px;max-width:34em}
+.btn{display:inline-block;font:inherit;font-weight:700;background:var(--c);color:#12152A;padding:12px 22px;text-decoration:none;border-radius:2px}
+.btn:hover{filter:brightness(1.1)}
+.note{background:var(--card);border:1px dashed var(--line);padding:10px 14px;margin:22px 0;color:var(--muted);font-size:.92rem}
+.intro{font-size:1.05rem;max-width:42em;margin:26px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:48px}
+.box{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);padding:18px}
+.box h2{font-size:1.1rem;margin-bottom:10px}
+.box ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.box li{color:var(--muted);font-size:.95rem;padding-left:12px;border-left:3px solid var(--line)}
+.gate{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c);padding:22px;margin:30px 0 48px}
+.gate h2{margin-bottom:10px}.gate ul{color:var(--muted);padding-left:20px}
+footer{padding:0 18px 36px;text-align:center;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="index.html">Soul Society</a><a class="back" href="index.html#societies">All societies</a></div></header>
+<div class="head"><div class="wrap"><h1 id="nm">Society</h1><p id="tg"></p><a class="btn" id="jn" href="index.html#join">Join this society</a></div></div>
+<main class="wrap" id="main"></main>
+<footer>Soul Society is an independent fan community. It is not affiliated with or endorsed by any studio, publisher or rights holder.</footer>
+
+<script>
+const D={
+"anime-hub":["Anime Hub","#5AB7FF","Series, characters, reviews and watch parties.","Anime Hub is the home for everything anime: weekly episode talk, reviews, recommendations and group watch parties. Spoilers go behind tags.",
+ ["Which opening is stuck in your head this season?","Underrated anime from the last five years","Sub or dub: where do you stand?"],
+ ["Weekly watch party starts this Friday","Spoiler-tag rules are now in place"],
+ ["Fri: group watch, two episodes","Sun: recommendation swap thread"],
+ ["Frieren: Beyond Journey\u2019s End","Vinland Saga","Mushishi"],
+ ["Mika shared a top-ten slice-of-life list","Dayo posted a season review"]],
+"gamers-society":["Gamers Society","#7BD88F","Game talk, tournaments and multiplayer nights.","Gamers Society is for players of every kind: console, PC and mobile. Find teammates, join tournaments and swap tips.",
+ ["Best co-op game for a group of five?","Mobile or console: where do you play most?","Share your best clutch moment"],
+ ["Monthly tournament sign-ups open soon","A multiplayer room opens Friday night"],
+ ["Fri: tournament night","Sat: casual lobby"],
+ ["Co-op games for groups","Free games worth trying","Games that run on low-end phones"],
+ ["Tolu shared a team-building tip sheet","Sora posted a beginner\u2019s guide to ranked play"]],
+"cinerealm":["CineRealm","#D9A441","Movies and TV: reviews, picks and discussion.","CineRealm covers films and series from every country: reviews, hot takes, watch lists and weekly picks.",
+ ["Best movie ending you\u2019ve seen?","Which series deserves a second season?","Nollywood picks worth watching"],
+ ["Monthly movie night poll is open","New review format: spoiler-free first"],
+ ["Sat: movie night","Wed: series discussion thread"],
+ ["Parasite","Spirited Away","Lionheart"],
+ ["Ada wrote a spoiler-free review","Femi shared a top-five thrillers list"]],
+"novelup-book-club":["NovelUp Book Club","#B58CFF","Books, reading challenges and discussion.","NovelUp is for readers: share what you\u2019re reading, join challenges and discuss stories chapter by chapter.",
+ ["What are you reading right now?","A book that changed your mind","Best book-to-screen adaptation"],
+ ["November reading challenge announced","Monthly book vote opens Monday"],
+ ["Sun: discussion call","Challenge: finish one book this month"],
+ ["Things Fall Apart","Half of a Yellow Sun","The Hobbit"],
+ ["Zainab posted a chapter-by-chapter review","Chidi shared a starter reading list"]],
+"ss-battle-ground":["SS Battle Ground","#FF7A59","Compare anime characters, debate and vote.","Pick a side. Each matchup compares two characters, and members vote and explain their choice. Finished battles move to the archive.",
+ ["Gojo vs Sukuna: who wins and why?","Strongest swordsman in anime?","Power-scaling or popularity: what are we voting on?"],
+ ["Gojo vs Sukuna voting is underway","Tournament ideas thread is open"],
+ ["This week: Gojo vs Sukuna","Next: strongest swordsman bracket"],
+ ["Best matchups to try next","Underrated characters worth a bracket","Best villain bracket"],
+ ["Sora submitted a new matchup","Dayo wrote a breakdown of a past battle"]],
+"music-society":["Music Society","#FF6FAE","Recommendations, artists and karaoke.","Share songs, discuss artists and join karaoke nights. Every genre is welcome.",
+ ["Song you\u2019ve had on repeat this week","Best anime opening of all time?","Afrobeats or amapiano: your pick"],
+ ["Karaoke begins Saturday","Playlist swap starts Monday"],
+ ["Sat 9:30 PM: karaoke, theme anime openings","Wed: playlist swap"],
+ ["Community playlist of the week","Top anime openings, ranked by members","Chill study mix"],
+ ["Mika shared a rainy-day playlist","Tolu posted a cover for the next karaoke night"]],
+"mmm-society":["MMM Society","#4DD0C4","Manga, manhwa and manhua: lists, reviews, chapter talk.","A reading community for manga, manhwa and manhua. Share lists, review titles and discuss new chapters with spoiler warnings. We link to official platforms and never host chapters.",
+ ["Newest chapter reactions (spoilers tagged)","Best manhwa for new readers","Manga that deserves an anime"],
+ ["New reading challenge announced","Spoiler rules for chapter threads"],
+ ["Sun: chapter discussion","Challenge: read three completed series"],
+ ["Monster","Solo Leveling","Slam Dunk"],
+ ["Ada posted a review of a completed series","Dayo shared a beginner\u2019s reading list"]],
+"hentai-paradise":["Hentai Paradise","#C8323C","An age-restricted community for verified adults.","This society is separately moderated and open to adults only (18+)."]
+};
+const id=new URLSearchParams(location.search).get("s"),s=Object.prototype.hasOwnProperty.call(D,id)?D[id]:null,m=document.getElementById("main");
+const li=a=>a.map(x=>`<li>${x}</li>`).join("");
+if(!s){
+  document.getElementById("nm").textContent="Society not found";
+  document.getElementById("jn").style.display="none";
+  m.innerHTML='<p class="intro">That society doesn\u2019t exist. <a href="index.html#societies">Go back to the directory</a>.</p>';
+}else{
+  document.title=s[0]+" \u2013 Soul Society";
+  document.documentElement.style.setProperty("--c",s[1]);
+  document.getElementById("nm").textContent=s[0];
+  document.getElementById("tg").textContent=s[2];
+  if(id==="hentai-paradise"){
+    document.getElementById("jn").textContent="Apply for membership";
+    m.innerHTML=`<div class="gate"><h2>Adults only (18+)</h2><p>${s[3]} There is no content on this page. Access opens only to verified adult members, after an administrator approves your application.</p><ul><li>You must be 18 or older.</li><li>Applications are reviewed by administrators.</li><li>Strict moderation and community rules apply.</li><li>Respect every member\u2019s privacy.</li></ul></div>`;
+  }else{
+    m.innerHTML=`<div class="note">This page shows sample content so you can see how it will look. Real posts and activity appear once member accounts go live.</div>
+    <p class="intro">${s[3]}</p>
+    <div class="grid">
+      <div class="box"><h2>Latest discussions</h2><ul>${li(s[4])}</ul></div>
+      <div class="box"><h2>Announcements</h2><ul>${li(s[5])}</ul></div>
+      <div class="box"><h2>Upcoming activities</h2><ul>${li(s[6])}</ul></div>
+      <div class="box"><h2>Popular recommendations</h2><ul>${li(s[7])}</ul></div>
+      <div class="box"><h2>Member contributions</h2><ul>${li(s[8])}</ul></div>
+    </div>`;
+  }
+}
+</script>
+</body>
+</html>
