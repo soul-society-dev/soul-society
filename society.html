@@ -35,11 +35,26 @@ a{color:inherit}:focus-visible{outline:3px solid var(--c);outline-offset:3px}
 .gate{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c);padding:22px;margin:30px 0 48px}
 .gate h2{margin-bottom:10px}.gate ul{color:var(--muted);padding-left:20px}
 footer{padding:0 18px 36px;text-align:center;color:var(--muted);font-size:.85rem}
+.battle{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);padding:22px;margin:0 0 28px}
+.battle .meta{color:var(--muted);margin:6px 0 0}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:16px 0}
+.vs button{font:inherit;font-weight:700;padding:14px 8px;background:var(--bg);color:var(--ink);border:2px solid var(--line);cursor:pointer}
+.vs button:hover,.vs button[aria-pressed="true"]{border-color:var(--c)}
+.vs i{font-style:normal;font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;color:#C8323C}
+.vs svg{display:block;width:72px;height:72px;margin:0 auto 6px;transition:transform .25s}
+.vs button:hover svg,.vs button[aria-pressed="true"] svg{transform:scale(1.12)}
+#bva svg{color:#5AB7FF}#bvb svg{color:#C8323C}
+.vs button[aria-pressed="true"] svg{filter:drop-shadow(0 0 8px currentColor)}
+.bar{display:flex;height:26px;border:1px solid var(--line);overflow:hidden;font-size:.8rem;font-weight:700;color:#fff}
+.bar span{display:flex;align-items:center;padding:0 8px;white-space:nowrap;transition:width .4s}
+.bar .a{background:#1E7FCB}.bar .b{background:#C8323C;justify-content:flex-end}
+@media (max-width:640px){.vs{grid-template-columns:1fr}.vs i{text-align:center}}
+@media (prefers-reduced-motion:reduce){.vs svg,.bar span{transition:none}}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="index.html">Soul Society</a><a class="back" href="index.html#societies">All societies</a></div></header>
-<div class="head"><div class="wrap"><h1 id="nm">Society</h1><p id="tg"></p><a class="btn" id="jn" href="index.html#join">Join this society</a></div></div>
+<header class="top"><div class="wrap"><a class="logo" href="index.html">Soul Society</a><a class="back" href="societies.html">All societies</a></div></header>
+<div class="head"><div class="wrap"><h1 id="nm">Society</h1><p id="tg"></p><a class="btn" id="jn" href="join.html">Join this society</a></div></div>
 <main class="wrap" id="main"></main>
 <footer>Soul Society is an independent fan community. It is not affiliated with or endorsed by any studio, publisher or rights holder.</footer>
 
@@ -87,33 +102,63 @@ const D={
  ["Sun: chapter discussion","Challenge: read three completed series"],
  ["Monster","Solo Leveling","Slam Dunk"],
  ["Ada posted a review of a completed series","Dayo shared a beginner\u2019s reading list"]],
+"games-arena":["Games Arena","#7BD88F","Quizzes, multiplayer rooms and tournaments.","A gaming destination inside Soul Society: quick games you can play at once, rooms to play with friends, and organised tournaments. Police & Thief, our signature social deduction game, is planned here too.",
+ ["Anime trivia","Guess the character","Emoji anime challenge","Word chain"],
+ ["Create a room and share the code","Public and private rooms","Play together with friends"],
+ ["Weekly anime trivia tournament","Monthly gaming championship","Society-versus-society battles"],
+ ["Secret roles, discussion and voting","Our signature social deduction game"],
+ ["Overall and per-game rankings","Weekly and monthly champions"],
+ ["Quick Play","Multiplayer","Tournaments","Police & Thief","Leaderboards"]],
+"karaoke-lounge":["Karaoke Lounge","#FF6FAE","Scheduled sessions, song requests and themed nights.","A dedicated lounge for karaoke nights. Sessions are scheduled on the site, with an outside voice room for the singing at first.",
+ ["Sat 9:30 PM: themed karaoke night","Monthly karaoke challenge"],
+ ["Suggest a song for the next session","Vote on the setlist"],
+ ["Join the queue and wait your turn","The queue shows live during sessions"],
+ ["Karaoke Star of the month","Crowd Favourite"],
+ ["Performance highlights","Member covers"],
+ ["Upcoming sessions","Song requests","Song queue","Monthly rankings","Featured performances"]],
 "hentai-paradise":["Hentai Paradise","#C8323C","An age-restricted community for verified adults.","This society is separately moderated and open to adults only (18+)."]
 };
 const id=new URLSearchParams(location.search).get("s"),s=Object.prototype.hasOwnProperty.call(D,id)?D[id]:null,m=document.getElementById("main");
 const li=a=>a.map(x=>`<li>${x}</li>`).join("");
+const T=(s&&s[9])||["Latest discussions","Announcements","Upcoming activities","Popular recommendations","Member contributions"];
 if(!s){
   document.getElementById("nm").textContent="Society not found";
   document.getElementById("jn").style.display="none";
-  m.innerHTML='<p class="intro">That society doesn\u2019t exist. <a href="index.html#societies">Go back to the directory</a>.</p>';
+  m.innerHTML='<p class="intro">That society doesn\u2019t exist. <a href="societies.html">Go back to the directory</a>.</p>';
 }else{
   document.title=s[0]+" \u2013 Soul Society";
   document.documentElement.style.setProperty("--c",s[1]);
   document.getElementById("nm").textContent=s[0];
   document.getElementById("tg").textContent=s[2];
+  if(s[9])document.getElementById("jn").textContent="Join Soul Society";
   if(id==="hentai-paradise"){
     document.getElementById("jn").textContent="Apply for membership";
     m.innerHTML=`<div class="gate"><h2>Adults only (18+)</h2><p>${s[3]} There is no content on this page. Access opens only to verified adult members, after an administrator approves your application.</p><ul><li>You must be 18 or older.</li><li>Applications are reviewed by administrators.</li><li>Strict moderation and community rules apply.</li><li>Respect every member\u2019s privacy.</li></ul></div>`;
   }else{
-    m.innerHTML=`<div class="note">This page shows sample content so you can see how it will look. Real posts and activity appear once member accounts go live.</div>
+    m.innerHTML=`<div class="note">${s[9]?"This feature is still being built. Here is what is planned.":"This page shows sample content so you can see how it will look. Real posts and activity appear once member accounts go live."}</div>
     <p class="intro">${s[3]}</p>
     <div class="grid">
-      <div class="box"><h2>Latest discussions</h2><ul>${li(s[4])}</ul></div>
-      <div class="box"><h2>Announcements</h2><ul>${li(s[5])}</ul></div>
-      <div class="box"><h2>Upcoming activities</h2><ul>${li(s[6])}</ul></div>
-      <div class="box"><h2>Popular recommendations</h2><ul>${li(s[7])}</ul></div>
-      <div class="box"><h2>Member contributions</h2><ul>${li(s[8])}</ul></div>
+      <div class="box"><h2>${T[0]}</h2><ul>${li(s[4])}</ul></div>
+      <div class="box"><h2>${T[1]}</h2><ul>${li(s[5])}</ul></div>
+      <div class="box"><h2>${T[2]}</h2><ul>${li(s[6])}</ul></div>
+      <div class="box"><h2>${T[3]}</h2><ul>${li(s[7])}</ul></div>
+      <div class="box"><h2>${T[4]}</h2><ul>${li(s[8])}</ul></div>
     </div>`;
   }
+}
+if(s&&id==="ss-battle-ground"){
+  m.querySelector(".intro").insertAdjacentHTML("afterend",`<div class="battle"><h2>Matchup: Gojo vs Sukuna</h2><p class="meta">Who wins? Pick a side. Votes are saved on your device only for now.</p>
+  <div class="vs"><button id="bva" aria-pressed="false"><svg viewBox="0 0 80 80" aria-hidden="true"><defs><radialGradient id="gA"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#7FD0FF"/><stop offset="1" stop-color="#1E7FCB"/></radialGradient></defs><circle cx="40" cy="40" r="37" fill="none" stroke="#5AB7FF" stroke-width="1.5" opacity=".3"/><circle cx="40" cy="40" r="29" fill="none" stroke="#5AB7FF" stroke-width="2" opacity=".55"/><circle cx="40" cy="40" r="17" fill="url(#gA)"/></svg>Gojo</button><i>VS</i>
+  <button id="bvb" aria-pressed="false"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="36" fill="#2A0F16" stroke="#C8323C" stroke-width="2"/><path d="M22 18L50 64M34 14L62 60M46 12L68 48" stroke="#C8323C" stroke-width="5" stroke-linecap="round"/><path d="M16 40L26 60" stroke="#FF6A73" stroke-width="3" stroke-linecap="round"/></svg>Sukuna</button></div>
+  <div class="bar" id="bbar" aria-live="polite"></div></div>`);
+  const K="ss-battle";let v={a:128,b:116,pick:null};
+  try{const x=localStorage.getItem(K);if(x)v=JSON.parse(x)}catch(e){}
+  const A=document.getElementById("bva"),B=document.getElementById("bvb");
+  const draw=()=>{const t=v.a+v.b,pa=Math.round(v.a/t*100);
+    document.getElementById("bbar").innerHTML=`<span class="a" style="width:${pa}%">Gojo ${pa}%</span><span class="b" style="width:${100-pa}%">Sukuna ${100-pa}%</span>`;
+    A.setAttribute("aria-pressed",String(v.pick==="a"));B.setAttribute("aria-pressed",String(v.pick==="b"))};
+  const vote=k=>{if(v.pick===k)return;if(v.pick)v[v.pick]--;v[k]++;v.pick=k;try{localStorage.setItem(K,JSON.stringify(v))}catch(e){}draw()};
+  A.onclick=()=>vote("a");B.onclick=()=>vote("b");draw();
 }
 </script>
 </body>
