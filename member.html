@@ -43,6 +43,7 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
 .wait{background:#131728;border:1px solid #262B45;border-left:6px solid #D9A441;padding:22px;max-width:560px}
 .wait p{color:#A0A7C4}
 .sn{max-width:900px;margin:0 auto;padding:0 20px 12px;display:flex;gap:20px;flex-wrap:wrap;font-size:.93rem}.sn a{color:#A0A7C4;text-decoration:none}.sn a:hover{color:#5AB7FF}
+.pn{font-family:"Shippori Mincho B1",Georgia,serif;font-size:1.3rem;margin:0 0 6px}.pb{color:#A0A7C4;margin:0 0 14px;white-space:pre-wrap;word-break:break-word}
 #msg{margin-top:16px;min-height:1.5em;color:#D9A441;font-weight:700}
 </style>
 </head>
@@ -88,10 +89,17 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
     <div class="grid">
       <div class="card">
         <h2>Your profile</h2>
+        <div id="pview" hidden>
+          <p class="pn" id="vn"></p>
+          <p class="pb" id="vb"></p>
+          <button class="ghost" id="edit" type="button">Edit profile</button>
+          <p class="note" id="vs" role="status"></p>
+        </div>
         <form id="pf">
           <input id="un" maxlength="24" placeholder="Username (letters, numbers, _)" aria-label="Username" autocomplete="nickname">
           <textarea id="bio" maxlength="200" placeholder="A short bio (optional)" aria-label="Bio"></textarea>
           <button class="gold" type="submit">Save profile</button>
+          <button class="ghost" id="cancel" type="button" style="margin-top:10px">Cancel</button>
           <div id="pmsg" class="note" role="status"></div>
         </form>
       </div>
@@ -178,7 +186,7 @@ async function loadMember(){
   }
   const name=m.username||(m.email||mail).split("@")[0];
   $("hi").textContent="Welcome, "+name;$("hisub").textContent="Member of Soul Society";
-  $("un").value=m.username||"";$("bio").value=m.bio||"";
+  $("un").value=m.username||"";$("bio").value=m.bio||"";pfill(m.username,m.bio);pshow(!!m.username);
   const soc=m.societies||[];
   $("soc").innerHTML=soc.length?soc.map(s=>`<a href="society.html?s=${slug(s)}">${esc(s)}</a>`).join(""):'<span class="note">You haven\u2019t picked any societies yet.</span>';
   $("mem").hidden=false;
@@ -236,9 +244,15 @@ $("pf").addEventListener("submit",async e=>{
   try{
     const r=await api(SB+"/rest/v1/members?user_id=eq."+encodeURIComponent(uid),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({username:u||null,bio:bio||null})});
     if(!r.ok)throw new Error(r.status);
-    pm("Profile saved. Your name is updated at the top of the page.");$("hi").textContent="Welcome, "+(u||mail.split("@")[0]);
+    pfill(u,bio);pshow(!!u);$("vs").textContent="Profile saved.";pm("");$("hi").textContent="Welcome, "+(u||mail.split("@")[0]);
   }catch(err){pm("Could not save your profile. Try again.")}
 });
+
+/* profile view / edit */
+function pshow(v){$("pview").hidden=!v;$("pf").hidden=v}
+function pfill(u,b){$("vn").textContent=u||"";$("vb").textContent=b||"";$("vb").hidden=!b}
+$("edit").onclick=()=>{$("vs").textContent="";pm("");pshow(false)};
+$("cancel").onclick=()=>{pm("");pshow(!!$("vn").textContent)};
 
 /* start: confirmation link, saved session, or sign-in form */
 (async()=>{
