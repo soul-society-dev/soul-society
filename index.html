@@ -11,163 +11,171 @@
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45;--blue:#5AB7FF;--gold:#D9A441}}
 :root[data-theme="dark"]{--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45;--blue:#5AB7FF;--gold:#D9A441}
-html{scroll-padding-top:70px;scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;line-height:1.6}
 h1,h2,h3{font-family:"Shippori Mincho B1","Hiragino Mincho ProN",Georgia,serif;font-weight:800;line-height:1.15;margin:0}
 a{color:inherit}:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
-.wrap{max-width:1040px;margin:0 auto;padding:0 18px}
-.top{position:sticky;top:0;z-index:5;background:#0A0C16;color:#E9ECF5;border-bottom:1px solid #262B45}
+.wrap{max-width:1040px;margin:0 auto;padding:0 22px}.narrow{max-width:700px}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:#0A0C16;color:#E9ECF5;border-bottom:1px solid #262B45}
 .top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
-.logo{font-family:"Cinzel Decorative",Georgia,serif;font-weight:900;font-size:1.1rem;text-decoration:none;letter-spacing:.08em}
-.top nav{display:flex;gap:16px;font-size:.92rem;flex-wrap:wrap}.top nav a{text-decoration:none;color:#A0A7C4}.top nav a:hover{color:#5AB7FF}
-.hero{position:relative;background:linear-gradient(#0A0C16 0%,#1A2250 55%,#3B4F8F 100%);color:#E9ECF5;overflow:hidden;min-height:480px;display:flex;align-items:center}
-.hero svg{position:absolute;left:0;bottom:0;width:100%;height:46%;min-height:190px}
-.hero .wrap{position:relative;z-index:2;padding-top:56px;padding-bottom:150px}
+.logo{font-family:"Cinzel Decorative","Shippori Mincho B1",Georgia,serif;font-weight:900;font-size:1.1rem;text-decoration:none;letter-spacing:.08em}
+.top nav{display:flex;gap:28px;align-items:center;font-size:.95rem}
+.top nav a{text-decoration:none;color:#A0A7C4;padding:4px 0;border-bottom:2px solid transparent}
+.top nav a:hover{color:#5AB7FF}
+.top nav a[aria-current="page"]{color:#E9ECF5;border-bottom-color:#D9A441}
+.top nav a.cta-link{background:#D9A441;color:#12152A;padding:8px 16px;border-radius:2px;font-weight:700;border-bottom:0}
+.menu{display:none;background:transparent;color:#E9ECF5;border:1px solid #262B45;padding:8px 16px;font:inherit;border-radius:2px;cursor:pointer}
+
+/* hero and page heads */
+.hero,.phead{position:relative;background:linear-gradient(#0A0C16 0%,#1A2250 55%,#3B4F8F 100%);color:#E9ECF5;overflow:hidden}
+.hero{min-height:520px;display:flex;align-items:center}
+.phead{padding:64px 0 120px}
+.sky{position:absolute;left:0;bottom:0;width:100%;height:46%;min-height:170px}
+.hero>.wrap,.phead>.wrap{position:relative;z-index:2}
+.hero>.wrap{padding-top:56px;padding-bottom:160px}
 .hero h1{font-family:"Cinzel Decorative",Georgia,serif;font-weight:900;font-size:clamp(1.9rem,7.5vw,5rem);letter-spacing:.06em;background:linear-gradient(180deg,#fff 15%,#D9A441 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 14px rgba(90,183,255,.45))}
-.hero .tag{font-family:"Shippori Mincho B1",Georgia,serif;font-size:clamp(1rem,3vw,1.35rem);color:#D9A441;margin:12px 0 14px}
-.hero p{max-width:34em;color:#C9CFE3;margin:0 0 22px}
-.btn{display:inline-block;font:inherit;font-weight:700;background:#D9A441;color:#12152A;border:0;padding:12px 22px;text-decoration:none;cursor:pointer;border-radius:2px}
+.phead h1{font-family:"Cinzel Decorative",Georgia,serif;font-weight:900;font-size:clamp(1.6rem,6vw,3rem);letter-spacing:.05em;color:#fff}
+.tag{font-family:"Shippori Mincho B1",Georgia,serif;font-size:clamp(1rem,3vw,1.35rem);color:#D9A441;margin:12px 0 14px}
+.hero p,.phead p{max-width:34em;color:#C9CFE3;margin:0 0 24px}
+.phead p{margin:10px 0 0}
+.btn{display:inline-block;font:inherit;font-weight:700;background:#D9A441;color:#12152A;border:0;padding:13px 24px;text-decoration:none;cursor:pointer;border-radius:2px}
 .btn.ghost{background:transparent;color:#E9ECF5;border:2px solid #5AB7FF;margin-left:8px}
 .btn:hover{filter:brightness(1.1)}
-section{padding:60px 0 0}
-section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.4rem);margin-bottom:8px}
-.sub{color:var(--muted);max-width:42em;margin:0 0 24px}
-.about{display:grid;grid-template-columns:1.2fr 1fr;gap:28px}
-.about ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
-.about li{border-left:4px solid var(--blue);padding:4px 0 4px 14px;color:var(--muted)}
-.about li b{color:var(--ink)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.soc{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);padding:18px;display:flex;flex-direction:column;gap:6px}
-.soc h3{font-size:1.1rem}.soc p{margin:0;color:var(--muted);font-size:.93rem;flex:1}
-.badge{align-self:flex-start;font-size:.8rem;font-weight:700;border:1px solid var(--c);color:var(--c);padding:1px 8px;border-radius:99px}
-.soc.locked{opacity:.92;border-style:dashed}
-a.soc{text-decoration:none;color:inherit}a.soc:hover{border-color:var(--c)}.soc .go{font-weight:700;color:var(--c);font-size:.9rem}
-.feedlist{display:grid;gap:10px}.fi{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);padding:12px 16px;text-decoration:none;color:inherit}
-.fi:hover{border-color:var(--c)}.fi b{display:block}.fi span{color:var(--muted);font-size:.92rem}
-.events{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
-.ev{background:var(--card);border:1px solid var(--line);padding:18px}
-.ev .d{font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;font-size:1.5rem;color:var(--red)}
-.ev p{margin:4px 0 0;color:var(--muted);font-size:.93rem}
-.news{background:var(--card);border:1px solid var(--line);padding:6px 18px;margin-top:24px}
-.news div{padding:12px 0;border-bottom:1px solid var(--line)}.news div:last-child{border:0}
-.news b{display:block}.news span{color:var(--muted);font-size:.9rem}
-.ent{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
-.ent>div{background:var(--card);border:1px solid var(--line);padding:18px}
-.ent h3{font-size:1.1rem;margin-bottom:4px}.ent p{margin:0;color:var(--muted);font-size:.93rem}
-.soon{display:inline-block;margin-top:8px;font-size:.8rem;color:var(--gold);font-weight:700}
-.battle{background:var(--card);border:1px solid var(--line);padding:22px;margin-top:20px}
-.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:14px 0}
-.vs button{font:inherit;font-weight:700;padding:14px 8px;background:var(--bg);color:var(--ink);border:2px solid var(--line);cursor:pointer}
-.vs button:hover,.vs button[aria-pressed="true"]{border-color:var(--blue)}
-.vs i{font-style:normal;font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;color:var(--red)}
-.bar{display:flex;height:26px;border:1px solid var(--line);overflow:hidden;font-size:.8rem;font-weight:700;color:#fff}
-.bar span{display:flex;align-items:center;padding:0 8px;white-space:nowrap;transition:width .4s}
-.bar .a{background:#1E7FCB}.bar .b{background:#C8323C;justify-content:flex-end}
-.join{background:#0A0C16;color:#E9ECF5;text-align:center;padding:48px 18px;margin-top:60px}
-.join h2{font-size:clamp(1.6rem,5vw,2.6rem)}.join p{color:#A0A7C4;max-width:34em;margin:10px auto 20px}
-.join form{display:grid;gap:10px;max-width:480px;margin:0 auto;text-align:left}
-.join input,.join textarea{font:inherit;padding:12px;border:1px solid #262B45;background:#131728;color:#E9ECF5;width:100%}.join textarea{min-height:80px}.join fieldset{border:1px solid #262B45;padding:10px 12px;margin:0}.join legend{color:#A0A7C4;padding:0 6px}.join .chk{display:flex;gap:10px;align-items:center;padding:4px 0;color:#E9ECF5}.join input[type=checkbox]{width:auto;flex:none;padding:0}
-#ok{min-height:1.6em;margin-top:12px;color:#D9A441;font-weight:700}
-footer{padding:24px 18px 36px;text-align:center;color:var(--muted);font-size:.85rem;max-width:760px;margin:0 auto}
-.vs button svg{display:block;width:72px;height:72px;margin:0 auto 6px;transition:transform .25s}
-.vs button:hover svg,.vs button[aria-pressed="true"] svg{transform:scale(1.12)}
-#va svg{color:#5AB7FF}#vb svg{color:#C8323C}
-.vs button[aria-pressed="true"] svg{filter:drop-shadow(0 0 8px currentColor)}
 .spirits{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .spirit{position:absolute;bottom:-10px;border-radius:50%;background:#7FD0FF;box-shadow:0 0 10px 3px rgba(90,183,255,.7);opacity:0;animation:rise linear infinite}
 @keyframes rise{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}100%{transform:translate(var(--dx),-460px);opacity:0}}
 .moon{animation:glow 6s ease-in-out infinite}
 @keyframes glow{50%{opacity:.7}}
-@media (max-width:760px){.about{grid-template-columns:1fr}.vs{grid-template-columns:1fr}.vs i{text-align:center}.hero .btn.ghost{margin:10px 0 0}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar span{transition:none}.spirit,.moon{animation:none}.spirit{opacity:.6}.vs button svg{transition:none}}
+
+/* sections */
+section{padding:80px 0 0}
+main>section:last-of-type{padding-bottom:96px}
+section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
+.sub{color:var(--muted);max-width:42em;margin:0 0 32px}
+.lead{font-size:1.15rem;color:var(--muted);margin:0}
+.h3{font-size:1.1rem;margin:0 0 16px}
+.more{display:inline-block;margin-top:20px;font-weight:700;color:var(--blue);text-decoration:none}
+.more:hover{text-decoration:underline}
+
+/* door tiles on the home page */
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.door{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px;min-height:200px;background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);padding:28px 24px 24px;text-decoration:none;transition:transform .2s,border-color .2s}
+.door:hover{transform:translateY(-4px);border-color:var(--c)}
+.door .kj{position:absolute;right:12px;top:-4px;font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:5.5rem;opacity:.12;line-height:1;pointer-events:none}
+.door h3{font-size:1.3rem}.door p{margin:0;color:var(--muted);flex:1}
+.go{color:var(--c);font-weight:700;font-size:.9rem}
+.pills{display:flex;flex-wrap:wrap;gap:10px}
+.pill{border:2px solid var(--c);background:var(--card);color:var(--ink);padding:6px 16px;border-radius:99px;text-decoration:none;font-weight:700;font-size:.92rem}
+.pill:hover{background:var(--c);color:#12152A}
+.cta{background:#0A0C16;color:#E9ECF5;text-align:center;padding:64px 22px}
+.cta h2{font-size:clamp(1.6rem,5vw,2.4rem)}.cta p{color:#A0A7C4;max-width:34em;margin:10px auto 24px}
+
+/* cards and grids */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px}
+.soc{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);padding:24px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}
+.soc:hover{border-color:var(--c)}
+.soc h3{font-size:1.1rem}.soc p{margin:0;color:var(--muted);font-size:.93rem;flex:1}
+.soc.locked{border-style:dashed}
+.badge{align-self:flex-start;font-size:.8rem;font-weight:700;border:1px solid var(--c);color:var(--c);padding:1px 8px;border-radius:99px}
+.soc .go{margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:44px}
+.feedlist,.evlist{display:grid;gap:14px}
+.fi{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);padding:14px 18px;text-decoration:none;color:inherit}
+.fi:hover{border-color:var(--c)}.fi b{display:block}.fi span{color:var(--muted);font-size:.92rem}
+.ev{background:var(--card);border:1px solid var(--line);padding:18px 20px}
+.ev .d{font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;font-size:1.5rem;color:var(--red)}
+.ev h3{font-size:1.05rem}.ev p{margin:4px 0 0;color:var(--muted);font-size:.93rem}
+.ent4{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.ecard{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);padding:26px 22px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:transform .2s,border-color .2s}
+.ecard:hover{border-color:var(--c);transform:translateY(-4px)}
+.ecard p{margin:0;color:var(--muted);font-size:.95rem;flex:1}
+.tagc{font-size:.78rem;font-weight:700;color:var(--gold)}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chips span{border:1px solid var(--line);background:var(--card);padding:6px 16px;border-radius:99px;font-size:.92rem}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);padding:20px;counter-increment:s}
+.step::before{content:counter(s);display:block;font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;font-size:1.8rem;color:var(--red)}
+.step b{display:block;margin:4px 0}.step span{color:var(--muted);font-size:.93rem}
+
+/* join form */
+.joinbox{background:#0A0C16;color:#E9ECF5;padding:36px 24px;max-width:560px;margin:0 auto}
+.joinbox h2{margin-bottom:8px}.joinbox p{color:#A0A7C4;margin:0 0 20px}
+.joinbox form{display:grid;gap:10px;text-align:left}
+.joinbox input,.joinbox textarea{font:inherit;padding:12px;border:1px solid #262B45;background:#131728;color:#E9ECF5;width:100%}
+.joinbox textarea{min-height:80px}
+.joinbox fieldset{border:1px solid #262B45;padding:10px 12px;margin:0}
+.joinbox legend{color:#A0A7C4;padding:0 6px}
+.chk{display:flex;gap:10px;align-items:center;padding:4px 0}
+.joinbox input[type=checkbox]{width:auto;flex:none;padding:0}
+#ok{min-height:1.6em;margin-top:14px;color:#D9A441;font-weight:700}
+
+/* footer */
+.foot{border-top:1px solid var(--line);padding:32px 22px 40px;text-align:center;color:var(--muted);font-size:.88rem}
+.foot nav{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.foot a{text-decoration:none}.foot a:hover{color:var(--blue)}
+.foot p{max-width:620px;margin:0 auto}
+
+@media (max-width:760px){
+  .menu{display:block}
+  .top nav{display:none;width:100%;flex-direction:column;align-items:stretch;gap:0;padding-top:6px}
+  .top nav.open{display:flex}
+  .top nav a{padding:15px 4px;border-top:1px solid #262B45;border-bottom:0;font-size:1.05rem}
+  .top nav a.cta-link{margin-top:10px;text-align:center}
+  .two{grid-template-columns:1fr;gap:36px}
+  section{padding-top:64px}
+  .btn.ghost{margin:10px 0 0}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}.spirit,.moon{animation:none}.spirit{opacity:.6;bottom:auto;top:var(--ty,50%)}
+  .door,.ecard{transition:none}.door:hover,.ecard:hover{transform:none}
+}
+
+/* home announcement spotlight */
+.spot{background:#0A0C16;color:#E9ECF5;border-top:5px solid #FF7A59;padding:40px 24px;text-align:center}
+.spot .label{display:inline-block;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#D9A441;margin-bottom:10px}
+.spot h2{font-size:clamp(1.5rem,5vw,2.3rem);margin-bottom:10px}
+.spot p{color:#A0A7C4;max-width:34em;margin:0 auto 22px}
+.vsrow{display:flex;justify-content:center;align-items:center;gap:24px;margin:0 0 26px}
+.vsrow div{font-weight:700}.vsrow svg{display:block;width:84px;height:84px;margin:0 auto 6px}
+.vsrow i{font-style:normal;font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;color:#C8323C;font-size:1.5rem}
+
 </style>
 </head>
-<body>
-<header class="top"><div class="wrap">
-  <a class="logo" href="#top">Soul Society</a>
-  <nav aria-label="Main"><a href="#about">About</a><a href="#societies">Societies</a><a href="#feed">Activity</a><a href="#events">Events</a><a href="#entertainment">Entertainment</a><a href="#join">Join</a></nav>
-</div></header>
-
-<main id="top">
-<div class="hero">
-  <svg viewBox="0 0 1200 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-    <circle class="moon" cx="930" cy="40" r="70" fill="#E9ECF5" opacity=".92"/>
-    <path d="M0 260V190l60-8 40-40 40 40h50v-30l30-20 30 20v30h70l50-50 50 50h60v-60l40-30 40 30v60h90v-90l25-18 25-18 25 18 25 18v108h70l45-45 45 45h80v-40l30-25 30 25v40h60l40-60 40 60h80V260z" fill="#12163A" opacity=".75"/>
-    <path d="M0 260v-46h90l50-36 50 36h60v-20h40l50-40 50 40h90v-70h14V70l10-22 10 22v52h14v70h86l60-52 60 52h60v-28h60l50-38 50 38h90v-40l40-30 40 30v40h120l50-30 50 30h40v46z" fill="#070914"/>
-  </svg>
-  <div class="wrap">
-    <h1>Soul Society</h1>
-    <div class="tag">One Realm. Many Worlds. One Community.</div>
-    <p>Eight societies for anime, games, film, books, music and manga, under one roof. Find your people, join the events and take part in the fun.</p>
-    <a class="btn" href="#join">Join the community</a><a class="btn ghost" href="#societies">Explore the societies</a>
-  </div>
-</div>
-
-<section id="about"><div class="wrap">
+<body data-page="home">
+<div id="hdr"></div>
+<div class="hero"><div class="wrap">
+  <h1>Soul Society</h1>
+  <div class="tag">One Realm. Many Worlds. One Community.</div>
+  <p>Eight societies for anime, games, film, books, music and manga, under one roof. Find your people and join in.</p>
+  <a class="btn" href="societies.html">Explore societies</a><a class="btn ghost" href="join.html">Join the community</a>
+</div></div>
+<main>
+<section><div class="wrap narrow">
   <h2>About Soul Society</h2>
-  <div class="about">
-    <p class="sub" style="margin:0">Interest groups often live in separate WhatsApp chats, which makes them hard to find and easy to miss. Soul Society brings them into one place, where you can explore what you love, join activities and meet other members.</p>
-    <ul>
-      <li><b>Explore</b> societies built around what you enjoy.</li>
-      <li><b>Take part</b> in games, karaoke nights and reading challenges.</li>
-      <li><b>Stay informed</b> with public announcements and an events calendar.</li>
-    </ul>
-  </div>
+  <p class="lead">Interest groups often live in separate chats that are hard to find and easy to miss. Soul Society brings them together, so you can explore what you love, take part in events and meet other members.</p>
 </div></section>
 
-<section id="societies"><div class="wrap">
-  <h2>Society Directory</h2>
-  <p class="sub">Every society has its own personality and activities. Pick the ones that fit you.</p>
-  <div class="grid" id="socGrid"></div>
-</div></section>
-
-<section id="feed"><div class="wrap">
-  <h2>Activity feed</h2>
-  <p class="sub">One place to see what is happening across the societies. These are sample updates for now. Live updates arrive with member accounts.</p>
-  <div class="feedlist" id="feedList"></div>
-</div></section>
-
-<section id="events"><div class="wrap">
-  <h2>Events Centre</h2>
-  <p class="sub">What’s coming up across the societies.</p>
-  <div class="events">
-    <div class="ev"><div class="d">Fri 6 Nov</div><h3>Gaming tournament night</h3><p>Gamers Society. Sign-ups open to all members.</p></div>
-    <div class="ev"><div class="d">Sat 7 Nov</div><h3>Themed karaoke night</h3><p>Music Society. Suggest songs ahead of time.</p></div>
-    <div class="ev"><div class="d">Sun 8 Nov</div><h3>Chapter discussion</h3><p>MMM Society. Spoiler-free for the first 20 minutes.</p></div>
-  </div>
-  <div class="news">
-    <div><b>Membership applications are opening soon</b><span>Register your interest below and we’ll send an invite.</span></div>
-    <div><b>Soul Society Awards</b><span>A monthly celebration of active and outstanding members is on the way.</span></div>
+<section><div class="wrap">
+  <div class="spot">
+    <span class="label">Announcement</span>
+    <h2>Gojo vs Sukuna: voting is underway</h2>
+    <p>Who wins? Pick a side and see how the community is voting. Results update on the Battle Ground page.</p>
+    <div class="vsrow">
+      <div><svg viewBox="0 0 80 80" aria-hidden="true"><defs><radialGradient id="hA"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#7FD0FF"/><stop offset="1" stop-color="#1E7FCB"/></radialGradient></defs><circle cx="40" cy="40" r="37" fill="none" stroke="#5AB7FF" stroke-width="1.5" opacity=".3"/><circle cx="40" cy="40" r="29" fill="none" stroke="#5AB7FF" stroke-width="2" opacity=".55"/><circle cx="40" cy="40" r="17" fill="url(#hA)"/></svg>Gojo</div>
+      <i>VS</i>
+      <div><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="36" fill="#2A0F16" stroke="#C8323C" stroke-width="2"/><path d="M22 18L50 64M34 14L62 60M46 12L68 48" stroke="#C8323C" stroke-width="5" stroke-linecap="round"/><path d="M16 40L26 60" stroke="#FF6A73" stroke-width="3" stroke-linecap="round"/></svg>Sukuna</div>
+    </div>
+    <a class="btn" href="society.html?s=ss-battle-ground">Cast your vote</a>
   </div>
 </div></section>
-
-<section id="entertainment"><div class="wrap">
-  <h2>Entertainment</h2>
-  <p class="sub">The activities that make Soul Society more than a chat group.</p>
-  <div class="ent">
-    <div><h3>Games Arena</h3><p>Quizzes, anime guessing games, word games and multiplayer rooms.</p><span class="soon">Coming soon</span></div>
-    <div><h3>Karaoke Lounge</h3><p>Scheduled sessions, song suggestions and themed nights.</p><span class="soon">Coming soon</span></div>
-    <div><h3>MMM Reading Hub</h3><p>Reading lists, reviews and chapter talk with spoiler controls.</p><span class="soon">Coming soon</span></div>
-  </div>
-  <div class="battle">
-    <h3>SS Battle Ground: try a matchup</h3>
-    <p class="sub" style="margin:6px 0 0">Who wins? Pick a side. Votes here are saved on your device only.</p>
-    <div class="vs"><button id="va" aria-pressed="false"><svg viewBox="0 0 80 80" aria-hidden="true"><defs><radialGradient id="gA"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#7FD0FF"/><stop offset="1" stop-color="#1E7FCB"/></radialGradient></defs><circle cx="40" cy="40" r="37" fill="none" stroke="#5AB7FF" stroke-width="1.5" opacity=".3"/><circle cx="40" cy="40" r="29" fill="none" stroke="#5AB7FF" stroke-width="2" opacity=".55"/><circle cx="40" cy="40" r="17" fill="url(#gA)"/></svg>Gojo</button><i>VS</i><button id="vb" aria-pressed="false"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="36" fill="#2A0F16" stroke="#C8323C" stroke-width="2"/><path d="M22 18L50 64M34 14L62 60M46 12L68 48" stroke="#C8323C" stroke-width="5" stroke-linecap="round"/><path d="M16 40L26 60" stroke="#FF6A73" stroke-width="3" stroke-linecap="round"/></svg>Sukuna</button></div>
-    <div class="bar" id="bar" aria-live="polite"></div>
-  </div>
-</div></section>
-
-<div class="join" id="join">
-  <h2>Join the community</h2>
-  <p>Membership is by application and reviewed by our administrators. We only use your details to review your application.</p>
-  <form id="jf"><input id="nm" required maxlength="80" placeholder="Your full name" autocomplete="name" aria-label="Full name"><input id="em" type="email" required maxlength="120" placeholder="Email address" autocomplete="email" aria-label="Email address"><fieldset><legend>Which societies interest you?</legend><div id="pick"></div></fieldset><label class="chk"><input id="ad" type="checkbox"> I am 18 or older</label><textarea id="nt" maxlength="500" placeholder="Tell us a little about yourself (optional)" aria-label="About you"></textarea><button class="btn" type="submit">Submit application</button></form>
-  <div id="ok" role="status"></div>
-</div>
 </main>
-<footer>Soul Society is an independent fan community. It is not affiliated with or endorsed by any studio, publisher or rights holder.</footer>
-
+<div id="ftr"></div>
 <script>
+(function(){
+const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",APIKEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP";
 const S=[
  ["Anime Hub","Series, characters, recommendations and anime talk.","#5AB7FF"],
  ["Hentai Paradise","Members 18+ only. Access after verification.","#C8323C","18+"],
@@ -178,42 +186,70 @@ const S=[
  ["Music Society","Recommendations, artists and karaoke sessions.","#FF6FAE"],
  ["MMM Society","Manga, manhwa and manhua: lists, reviews, chapter talk.","#4DD0C4"]
 ];
-const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
-document.getElementById("socGrid").innerHTML=S.map(s=>`<a class="soc${s[3]?" locked":""}" style="--c:${s[2]}" href="society.html?s=${slug(s[0])}"><h3>${s[0]}</h3><p>${s[1]}</p>${s[3]?'<span class="badge">Age-restricted</span>':""}<span class="go">Enter society</span></a>`).join("");
 const F=[["Anime Hub","New anime recommendation posted."],["Gamers Society","A multiplayer room is open."],["Music Society","Karaoke begins Saturday."],["SS Battle Ground","Gojo vs Sukuna voting is underway."],["MMM Society","New reading challenge announced."]];
-document.getElementById("feedList").innerHTML=F.map(f=>{const c=S.find(s=>s[0]===f[0])[2];return `<a class="fi" style="--c:${c}" href="society.html?s=${slug(f[0])}"><div><b>${f[0]}</b><span>${f[1]}</span></div></a>`}).join("");
-const K="ss-battle";let v={a:128,b:116,pick:null};
-try{const x=localStorage.getItem(K);if(x)v=JSON.parse(x)}catch(e){}
-function draw(){
-  const t=v.a+v.b,pa=Math.round(v.a/t*100);
-  document.getElementById("bar").innerHTML=`<span class="a" style="width:${pa}%">Gojo ${pa}%</span><span class="b" style="width:${100-pa}%">Sukuna ${100-pa}%</span>`;
-  va.setAttribute("aria-pressed",v.pick==="a");vb.setAttribute("aria-pressed",v.pick==="b");
+const NAV=[["index.html","Home","home"],["societies.html","Societies","societies"],["happening.html","What\u2019s happening","happening"],["entertainment.html","Entertainment","entertainment"],["join.html","Join","join"]];
+const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+const $=id=>document.getElementById(id);
+const page=document.body.dataset.page||"";
+
+/* header and footer */
+const h=$("hdr");
+if(h)h.outerHTML=`<header class="top"><div class="wrap"><a class="logo" href="index.html">Soul Society</a>
+<button class="menu" id="menuBtn" aria-expanded="false" aria-controls="nav" type="button">Menu</button>
+<nav id="nav" aria-label="Main">${NAV.map(n=>`<a href="${n[0]}"${n[2]===page?' aria-current="page"':""}${n[2]==="join"?' class="cta-link"':""}>${n[1]}</a>`).join("")}</nav></div></header>`;
+const f=$("ftr");
+if(f)f.outerHTML=`<footer class="foot"><nav aria-label="Footer">${NAV.map(n=>`<a href="${n[0]}">${n[1]}</a>`).join("")}</nav><p>Soul Society is an independent fan community. It is not affiliated with or endorsed by any studio, publisher or rights holder.</p></footer>`;
+const mb=$("menuBtn"),nv=$("nav");
+if(mb){
+  mb.onclick=()=>{const o=nv.classList.toggle("open");mb.setAttribute("aria-expanded",String(o))};
+  nv.addEventListener("click",e=>{if(e.target.closest("a")){nv.classList.remove("open");mb.setAttribute("aria-expanded","false")}});
 }
-function vote(k){
-  if(v.pick===k)return;
-  if(v.pick)v[v.pick]--;
-  v[k]++;v.pick=k;
-  try{localStorage.setItem(K,JSON.stringify(v))}catch(e){}
-  draw();
-}
-va.onclick=()=>vote("a");vb.onclick=()=>vote("b");draw();
-const sp=document.createElement("div");sp.className="spirits";sp.setAttribute("aria-hidden","true");
-for(let i=0;i<24;i++){const e=document.createElement("span");e.className="spirit";const z=3+Math.random()*4;e.style.cssText=`left:${Math.random()*100}%;width:${z}px;height:${z}px;--dx:${(Math.random()*120-60)|0}px;animation-duration:${7+Math.random()*8}s;animation-delay:-${Math.random()*12}s`;if(i%4===0){e.style.background="#D9A441";e.style.boxShadow="0 0 10px 3px rgba(217,164,65,.7)"}sp.appendChild(e)}
-document.querySelector(".hero").appendChild(sp);
-document.getElementById("pick").innerHTML=S.map(s=>`<label class="chk"><input type="checkbox" value="${s[0]}"> ${s[0]}</label>`).join("");
-const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",APIKEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP";
-jf.addEventListener("submit",async e=>{
-  e.preventDefault();
-  const soc=[...document.querySelectorAll("#pick input:checked")].map(x=>x.value);
-  if(soc.includes("Hentai Paradise")&&!ad.checked){ok.textContent="The 18+ society is for adults only. Tick the 18+ box to apply for it, or untick it.";return}
-  const b=jf.querySelector("button");b.disabled=true;ok.textContent="Sending…";
-  try{
-    const r=await fetch(SB+"/rest/v1/applications",{method:"POST",headers:{apikey:APIKEY,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({full_name:nm.value.trim(),email:em.value.trim(),societies:soc,is_adult:ad.checked,note:nt.value.trim()||null})});
-    if(!r.ok)throw new Error(r.status);
-    ok.textContent="Application received. An administrator will review it and contact you by email.";jf.reset();
-  }catch(err){ok.textContent="Could not send your application. Check your connection and try again."}
-  b.disabled=false;
+
+/* skyline and spirit lights */
+const SKY=`<svg class="sky" viewBox="0 0 1200 260" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><circle class="moon" cx="930" cy="40" r="70" fill="#E9ECF5" opacity=".92"/><path d="M0 260V190l60-8 40-40 40 40h50v-30l30-20 30 20v30h70l50-50 50 50h60v-60l40-30 40 30v60h90v-90l25-18 25-18 25 18 25 18v108h70l45-45 45 45h80v-40l30-25 30 25v40h60l40-60 40 60h80V260z" fill="#12163A" opacity=".75"/><path d="M0 260v-46h90l50-36 50 36h60v-20h40l50-40 50 40h90v-70h14V70l10-22 10 22v52h14v70h86l60-52 60 52h60v-28h60l50-38 50 38h90v-40l40-30 40 30v40h120l50-30 50 30h40v46z" fill="#070914"/></svg>`;
+document.querySelectorAll(".hero,.phead").forEach(el=>{
+  el.insertAdjacentHTML("afterbegin",SKY);
+  const sp=document.createElement("div");sp.className="spirits";sp.setAttribute("aria-hidden","true");
+  const n=el.classList.contains("hero")?24:12;
+  for(let i=0;i<n;i++){
+    const e=document.createElement("span");e.className="spirit";const z=3+Math.random()*4;
+    e.style.cssText=`--ty:${(20+Math.random()*60)|0}%;left:${Math.random()*100}%;width:${z}px;height:${z}px;--dx:${(Math.random()*120-60)|0}px;animation-duration:${7+Math.random()*8}s;animation-delay:-${Math.random()*12}s`;
+    if(i%4===0){e.style.background="#D9A441";e.style.boxShadow="0 0 10px 3px rgba(217,164,65,.7)"}
+    sp.appendChild(e);
+  }
+  el.appendChild(sp);
 });
+
+/* societies */
+if($("socGrid"))$("socGrid").innerHTML=S.map(s=>`<a class="soc${s[3]?" locked":""}" style="--c:${s[2]}" href="society.html?s=${slug(s[0])}"><h3>${s[0]}</h3><p>${s[1]}</p>${s[3]?'<span class="badge">Age-restricted</span>':""}<span class="go">Enter society</span></a>`).join("");
+if($("socPills"))$("socPills").innerHTML=S.map(s=>`<a class="pill" style="--c:${s[2]}" href="society.html?s=${slug(s[0])}">${s[0]}</a>`).join("");
+
+/* activity feed */
+const fl=$("feedList");
+if(fl){
+  const lim=+fl.dataset.limit||F.length;
+  fl.innerHTML=F.slice(0,lim).map(x=>{const c=S.find(s=>s[0]===x[0])[2];return `<a class="fi" style="--c:${c}" href="society.html?s=${slug(x[0])}"><div><b>${x[0]}</b><span>${x[1]}</span></div></a>`}).join("");
+}
+
+/* join form */
+const jf=$("jf");
+if(jf){
+  $("pick").innerHTML=S.map(s=>`<label class="chk"><input type="checkbox" value="${s[0]}"> ${s[0]}</label>`).join("");
+  jf.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const ok=$("ok"),soc=[...document.querySelectorAll("#pick input:checked")].map(x=>x.value);
+    if(soc.includes("Hentai Paradise")&&!$("ad").checked){ok.textContent="The 18+ society is for adults only. Tick the 18+ box to apply for it, or untick it.";return}
+    const b=jf.querySelector("button");b.disabled=true;ok.textContent="Sending\u2026";
+    try{
+      const r=await fetch(SB+"/rest/v1/applications",{method:"POST",headers:{apikey:APIKEY,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({full_name:$("nm").value.trim(),email:$("em").value.trim(),societies:soc,is_adult:$("ad").checked,note:$("nt").value.trim()||null})});
+      if(!r.ok)throw new Error(r.status);
+      ok.textContent="Application received. An administrator will review it and contact you by email.";jf.reset();
+    }catch(err){ok.textContent="Could not send your application. Check your connection and try again."}
+    b.disabled=false;
+  });
+}
+})();
+
 </script>
 </body>
 </html>
