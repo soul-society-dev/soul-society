@@ -42,11 +42,13 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
 .note{color:#A0A7C4;font-size:.9rem;margin:10px 0 0}
 .wait{background:#131728;border:1px solid #262B45;border-left:6px solid #D9A441;padding:22px;max-width:560px}
 .wait p{color:#A0A7C4}
+.sn{max-width:900px;margin:0 auto;padding:0 20px 12px;display:flex;gap:20px;flex-wrap:wrap;font-size:.93rem}.sn a{color:#A0A7C4;text-decoration:none}.sn a:hover{color:#5AB7FF}
 #msg{margin-top:16px;min-height:1.5em;color:#D9A441;font-weight:700}
 </style>
 </head>
 <body>
-<header class="top"><div class="in"><a class="logo" href="index.html">Soul Society</a><button class="ghost" id="out" hidden type="button">Sign out</button></div></header>
+<header class="top"><div class="in"><a class="logo" href="index.html">Soul Society</a><button class="ghost" id="out" hidden type="button">Sign out</button></div>
+<nav class="sn" aria-label="Site"><a href="index.html">Home</a><a href="societies.html">Societies</a><a href="happening.html">What&rsquo;s happening</a><a href="entertainment.html">Entertainment</a></nav></header>
 <main class="wrap">
 
 <section id="auth" class="box" hidden>
@@ -90,6 +92,7 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
           <input id="un" maxlength="24" placeholder="Username (letters, numbers, _)" aria-label="Username" autocomplete="nickname">
           <textarea id="bio" maxlength="200" placeholder="A short bio (optional)" aria-label="Bio"></textarea>
           <button class="gold" type="submit">Save profile</button>
+          <div id="pmsg" class="note" role="status"></div>
         </form>
       </div>
       <div class="card gold-top">
@@ -123,6 +126,7 @@ let tok=null,uid=null,mail=null,keep=true;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const msg=t=>{$("msg").textContent=t};
+const pm=t=>{$("pmsg").textContent=t};
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
 const base=()=>location.origin+location.pathname.replace(/[^/]*$/,"");
 const hdr=()=>({apikey:KEY,Authorization:"Bearer "+tok,"Content-Type":"application/json"});
@@ -228,12 +232,12 @@ $("forgot").onclick=async()=>{
 $("pf").addEventListener("submit",async e=>{
   e.preventDefault();
   const u=$("un").value.trim(),bio=$("bio").value.trim();
-  if(u&&!/^[A-Za-z0-9_]{3,24}$/.test(u)){msg("Usernames use 3 to 24 letters, numbers or underscores.");return}
+  if(u&&!/^[A-Za-z0-9_]{3,24}$/.test(u)){pm("Usernames use 3 to 24 letters, numbers or underscores. No spaces or dashes.");return}
   try{
     const r=await api(SB+"/rest/v1/members?user_id=eq."+encodeURIComponent(uid),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({username:u||null,bio:bio||null})});
     if(!r.ok)throw new Error(r.status);
-    msg("Profile saved.");$("hi").textContent="Welcome, "+(u||mail.split("@")[0]);
-  }catch(err){msg("Could not save your profile. Try again.")}
+    pm("Profile saved. Your name is updated at the top of the page.");$("hi").textContent="Welcome, "+(u||mail.split("@")[0]);
+  }catch(err){pm("Could not save your profile. Try again.")}
 });
 
 /* start: confirmation link, saved session, or sign-in form */
