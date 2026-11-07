@@ -234,7 +234,7 @@ const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
     rows.filter(x=>x.parent_id).forEach(x=>(reps[x.parent_id]=reps[x.parent_id]||[]).push(x));
     const can=mine.includes(s[0]);
     const form=can?'<form class="dform th" id="nf"><h3>Start a discussion</h3><input id="nt" required maxlength="90" placeholder="Title" aria-label="Title"><textarea id="nb" required maxlength="1000" placeholder="What do you want to talk about?" aria-label="Message"></textarea><button class="btn" type="submit">Post</button> <span class="by" id="nm"></span></form>':'<p class="note" style="margin:0 0 14px">Join this society to start discussions and reply.</p>';
-    const del=x=>x.author_id===ses.uid?`<button class="sm" type="button" data-del="${esc(x.id)}">Delete</button>`:"";
+    const del=x=>x.author_id===ses.uid?`<button class="sm" type="button" data-del="${esc(x.id)}">Delete</button>`:`<button class="sm" type="button" data-rep="${esc(x.id)}">Report</button>`;
     disc.innerHTML=form+(tops.length?tops.map(t=>{
       const rs=reps[t.id]||[];
       return `<div class="th"><h3>${esc(t.title)}</h3><div class="by">${esc(t.author_name)} \u00b7 ${esc(when(t.created_at))}</div><p>${esc(t.body)}</p>${del(t)}
@@ -260,6 +260,18 @@ const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
     if(!confirm("Delete this? This cannot be undone."))return;
     try{const r=await rest("posts?id=eq."+encodeURIComponent(b.dataset.del),ses,{method:"DELETE"});if(!r.ok)throw new Error(r.status);await load()}
     catch(err){b.textContent="Could not delete"}
+  });
+  disc.addEventListener("click",async e=>{
+    const b=e.target.closest("button[data-rep]");if(!b)return;
+    const why=prompt("Why are you reporting this? (optional)");
+    if(why===null)return;
+    b.disabled=true;
+    try{
+      const r=await rest("reports",ses,{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({post_id:b.dataset.rep,reporter_id:ses.uid,reason:why.trim().slice(0,300)||null})});
+      if(r.status===409){b.textContent="Already reported";return}
+      if(!r.ok)throw new Error(r.status);
+      b.textContent="Reported. Thank you.";
+    }catch(err){b.textContent="Could not report";b.disabled=false}
   });
   await load();
 })();

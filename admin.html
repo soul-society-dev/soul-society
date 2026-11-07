@@ -58,6 +58,7 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
       <button class="vtab" data-v="apps" type="button" aria-pressed="true">Applications</button>
       <button class="vtab" data-v="mems" type="button" aria-pressed="false">Members</button>
       <button class="vtab" data-v="cont" type="button" aria-pressed="false">Content</button>
+      <button class="vtab" data-v="mod" type="button" aria-pressed="false">Moderation</button>
       <button class="out" id="out" type="button">Sign out</button>
     </div>
     <div id="appsView">
@@ -70,6 +71,13 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
     <div id="list" aria-live="polite"></div>
     </div>
     <div id="memsView" hidden><div id="mlist" aria-live="polite"></div></div>
+    <div id="modView" hidden>
+      <div class="m" id="mmsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
+      <h2 style="margin:12px 0 10px;font-family:Georgia,serif">Reported posts</h2>
+      <div id="rlist"></div>
+      <h2 style="margin:24px 0 10px;font-family:Georgia,serif">Recent posts</h2>
+      <div id="plist"></div>
+    </div>
     <div id="contView" hidden>
       <div class="m" id="cmsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
       <form class="c" id="af">
@@ -207,10 +215,11 @@ function drawMembers(){
 $("views").addEventListener("click",e=>{
   const b=e.target.closest(".vtab");if(!b)return;
   const v=b.dataset.v;
-  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";
+  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";$("modView").hidden=v!=="mod";
   document.querySelectorAll(".vtab").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
   if(v==="mems")loadMembers();
   if(v==="cont")loadContent();
+  if(v==="mod")loadMod();
 });
 
 /* announcements and events */
@@ -249,6 +258,30 @@ $("contView").addEventListener("click",async e=>{
     if(!r.ok)throw new Error(r.status);
     cm("Deleted.");loadContent();
   }catch(err){cm("Could not delete. Try again.");b.disabled=false}
+});
+
+/* moderation */
+const mm=t=>{$("mmsg").textContent=t};
+async function loadMod(){
+  try{
+    const [rr,rp]=await Promise.all([api(SB+"/rest/v1/reports?select=*,posts(*)&status=eq.open&order=created_at.desc"),api(SB+"/rest/v1/posts?select=*&order=created_at.desc&limit=100")]);
+    if(rr.status===401||rp.status===401){signOut("Your session expired. Sign in again.");return}
+    const rep=await rr.json(),po=await rp.json();
+    $("rlist").innerHTML=(Array.isArray(rep)&&rep.length)?rep.map(x=>{const p=x.posts||{};return `<div class="c"><h2>${esc(p.title||"Reply")}</h2><div class="m">${esc(p.society||"")} · by ${esc(p.author_name||"")}</div><div class="note">${esc(p.body||"(already removed)")}</div><div class="m">Reason: ${esc(x.reason||"none given")}</div><div class="act"><button class="no" data-mdel="${esc(x.post_id)}">Delete post</button><button class="undo" data-dismiss="${esc(x.id)}">Dismiss report</button></div></div>`}).join(""):'<p class="m">No open reports.</p>';
+    $("plist").innerHTML=(Array.isArray(po)&&po.length)?po.map(p=>`<div class="c"><h2>${esc(p.title||"Reply")}</h2><div class="m">${esc(p.society)} · ${esc(p.author_name)} · ${esc(new Date(p.created_at).toLocaleDateString())}</div><div class="note">${esc(p.body)}</div><div class="act"><button class="no" data-mdel="${esc(p.id)}">Delete</button></div></div>`).join(""):'<p class="m">No posts yet.</p>';
+  }catch(err){mm("Could not load. Check your connection.")}
+}
+$("modView").addEventListener("click",async e=>{
+  const d=e.target.closest("button[data-mdel]"),r=e.target.closest("button[data-dismiss]");
+  if(!d&&!r)return;
+  if(d&&!confirm("Delete this post? This cannot be undone."))return;
+  const b=d||r;b.disabled=true;
+  try{
+    const res=d?await api(SB+"/rest/v1/posts?id=eq."+encodeURIComponent(d.dataset.mdel),{method:"DELETE"})
+              :await api(SB+"/rest/v1/reports?id=eq."+encodeURIComponent(r.dataset.dismiss),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({status:"resolved"})});
+    if(!res.ok)throw new Error(res.status);
+    mm(d?"Post deleted.":"Report dismissed.");loadMod();
+  }catch(err){mm("Could not complete that. Try again.");b.disabled=false}
 });
 
 (async()=>{
