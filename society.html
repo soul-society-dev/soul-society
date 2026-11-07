@@ -161,6 +161,41 @@ if(s&&id==="ss-battle-ground"){
   A.onclick=()=>vote("a");B.onclick=()=>vote("b");draw();
 }
 try{if(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member"))document.getElementById("lg").textContent="My account"}catch(e){}
+
+/* signed-in members: show membership instead of the join button */
+(async()=>{
+  const NAMES=["Anime Hub","Hentai Paradise","Gamers Society","CineRealm","NovelUp Book Club","SS Battle Ground","Music Society","MMM Society"];
+  if(!s||!NAMES.includes(s[0]))return;
+  const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP",SK="ss-member";
+  try{
+    let bucket=localStorage,raw=localStorage.getItem(SK);
+    if(!raw){bucket=sessionStorage;raw=sessionStorage.getItem(SK)}
+    if(!raw)return;
+    const rt=JSON.parse(raw).rt;if(!rt)return;
+    const tr=await fetch(SB+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:rt})});
+    if(!tr.ok)return;
+    const ses=await tr.json();
+    try{bucket.setItem(SK,JSON.stringify({rt:ses.refresh_token}))}catch(e){}
+    const uid=ses.user&&ses.user.id;if(!uid)return;
+    const h={apikey:KEY,Authorization:"Bearer "+ses.access_token,"Content-Type":"application/json"};
+    const r=await fetch(SB+"/rest/v1/members?user_id=eq."+encodeURIComponent(uid)+"&select=societies",{headers:h});
+    const rows=await r.json();
+    if(!Array.isArray(rows)||!rows[0])return;
+    const mine=rows[0].societies||[],jn=document.getElementById("jn");
+    const member=()=>{jn.textContent="\u2713 You\u2019re a member";jn.href="member.html";jn.onclick=null};
+    if(mine.includes(s[0])){member();return}
+    if(id==="hentai-paradise")return;
+    jn.textContent="Join this society";jn.href="#";
+    jn.onclick=async e=>{
+      e.preventDefault();jn.textContent="Joining\u2026";
+      try{
+        const p=await fetch(SB+"/rest/v1/members?user_id=eq."+encodeURIComponent(uid),{method:"PATCH",headers:{...h,Prefer:"return=minimal"},body:JSON.stringify({societies:[...mine,s[0]]})});
+        if(!p.ok)throw new Error(p.status);
+        mine.push(s[0]);member();
+      }catch(err){jn.textContent="Could not join. Try again."}
+    };
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
