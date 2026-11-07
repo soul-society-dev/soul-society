@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0C16'/%3E%3Ccircle cx='40' cy='24' r='12' fill='%23E9ECF5'/%3E%3Cpath d='M0 64V48l8-4 8 8 8-14 8 12 8-8 24 10v12z' fill='%23D9A441'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="theme-color" content="#0A0C16">
@@ -10,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Shippori+Mincho+B1:wght@800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#EEF1F8;--ink:#12152A;--card:#fff;--muted:#4F5575;--line:#C9CFE3;--c:#1E7FCB;
+:root{color-scheme:dark;--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45;--c:#1E7FCB;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45}}
 :root[data-theme="dark"]{--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45}
@@ -63,6 +64,8 @@ footer{padding:0 18px 36px;text-align:center;color:var(--muted);font-size:.85rem
 .dform textarea{min-height:70px}.dform .btn{border:0;cursor:pointer}
 .sm{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;font-size:.85rem;text-decoration:underline;padding:0}
 .hemb{width:72px;height:72px;color:var(--c);margin-bottom:10px}.hemb svg{width:100%;height:100%;display:block}
+.av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--c);color:#0A0C16;font-weight:800;font-size:.9rem;flex:none}.av.big{width:64px;height:64px;font-size:1.6rem}
+.th .by{display:flex;gap:8px;align-items:center}
 </style>
 </head>
 <body>
@@ -196,6 +199,8 @@ const getSes=()=>_ses||(_ses=(async()=>{
 const rest=(path,ses,opt)=>fetch(SB+"/rest/v1/"+path,{...(opt||{}),headers:{apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json",...((opt&&opt.headers)||{})}});
 const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
+const AVC=["#5AB7FF","#7BD88F","#D9A441","#B58CFF","#FF7A59","#FF6FAE","#4DD0C4","#9AA7FF"];
+const av=(n,big)=>{n=String(n||"?");let h=0;for(const c of n)h=(h*31+c.codePointAt(0))>>>0;const m=n.match(/[A-Za-z0-9]/);return `<span class="av${big?" big":""}" style="--c:${AVC[h%AVC.length]}" aria-hidden="true">${m?m[0].toUpperCase():"?"}</span>`};
 (async()=>{
   const NAMES=["Anime Hub","Hentai Paradise","Gamers Society","CineRealm","NovelUp Book Club","SS Battle Ground","Music Society","MMM Society"];
   if(!s||!NAMES.includes(s[0]))return;
@@ -243,8 +248,8 @@ const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
     const del=x=>x.author_id===ses.uid?`<button class="sm" type="button" data-del="${esc(x.id)}">Delete</button>`:`<button class="sm" type="button" data-rep="${esc(x.id)}">Report</button>`;
     disc.innerHTML=form+(tops.length?tops.map(t=>{
       const rs=reps[t.id]||[];
-      return `<div class="th"><h3>${esc(t.title)}</h3><div class="by">${esc(t.author_name)} \u00b7 ${esc(when(t.created_at))}</div><p>${esc(t.body)}</p>${del(t)}
-      <details${t.id===openId?" open":""}><summary>${rs.length} ${rs.length===1?"reply":"replies"}</summary>${rs.map(r=>`<div class="rp"><div class="by">${esc(r.author_name)} \u00b7 ${esc(when(r.created_at))}</div><p>${esc(r.body)}</p>${del(r)}</div>`).join("")}${can?`<form class="dform" data-reply="${esc(t.id)}"><textarea required maxlength="1000" placeholder="Write a reply" aria-label="Reply"></textarea><button class="btn" type="submit">Reply</button></form>`:""}</details></div>`}).join(""):'<p class="note" style="margin:0">No discussions yet. Be the first to start one.</p>');
+      return `<div class="th"><h3>${esc(t.title)}</h3><div class="by">${av(t.author_name)}<span>${esc(t.author_name)} \u00b7 ${esc(when(t.created_at))}</span></div><p>${esc(t.body)}</p>${del(t)}
+      <details${t.id===openId?" open":""}><summary>${rs.length} ${rs.length===1?"reply":"replies"}</summary>${rs.map(r=>`<div class="rp"><div class="by">${av(r.author_name)}<span>${esc(r.author_name)} \u00b7 ${esc(when(r.created_at))}</span></div><p>${esc(r.body)}</p>${del(r)}</div>`).join("")}${can?`<form class="dform" data-reply="${esc(t.id)}"><textarea required maxlength="1000" placeholder="Write a reply" aria-label="Reply"></textarea><button class="btn" type="submit">Reply</button></form>`:""}</details></div>`}).join(""):'<p class="note" style="margin:0">No discussions yet. Be the first to start one.</p>');
   };
   disc.addEventListener("submit",async e=>{
     e.preventDefault();const f=e.target,btn=f.querySelector("button");btn.disabled=true;

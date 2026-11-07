@@ -48,6 +48,8 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
 .sn{max-width:900px;margin:0 auto;padding:0 20px 12px;display:flex;gap:20px;flex-wrap:wrap;font-size:.93rem}.sn a{color:#A0A7C4;text-decoration:none}.sn a:hover{color:#5AB7FF}
 .pn{font-family:"Shippori Mincho B1",Georgia,serif;font-size:1.3rem;margin:0 0 6px}.pb{color:#A0A7C4;margin:0 0 14px;white-space:pre-wrap;word-break:break-word}
 #msg{margin-top:16px;min-height:1.5em;color:#D9A441;font-weight:700}
+.av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--c);color:#0A0C16;font-weight:800;font-size:.9rem;flex:none}.av.big{width:64px;height:64px;font-size:1.6rem}
+.avr{display:flex;align-items:center;gap:14px;margin-bottom:6px}.avr .pn{margin:0}
 </style>
 </head>
 <body>
@@ -93,7 +95,7 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
       <div class="card">
         <h2>Your profile</h2>
         <div id="pview" hidden>
-          <p class="pn" id="vn"></p>
+          <div class="avr"><span id="vav"></span><p class="pn" id="vn"></p></div>
           <p class="pb" id="vb"></p>
           <button class="ghost" id="edit" type="button">Edit profile</button>
           <p class="note" id="vs" role="status"></p>
@@ -266,9 +268,11 @@ async function loadFeed(soc){
   }catch(e){$("mAn").innerHTML="<li>Could not load announcements.</li>";$("mEv").innerHTML="<li>Could not load events.</li>"}
 }
 
+const AVC=["#5AB7FF","#7BD88F","#D9A441","#B58CFF","#FF7A59","#FF6FAE","#4DD0C4","#9AA7FF"];
+const av=(n,big)=>{n=String(n||"?");let h=0;for(const c of n)h=(h*31+c.codePointAt(0))>>>0;const m=n.match(/[A-Za-z0-9]/);return `<span class="av${big?" big":""}" style="--c:${AVC[h%AVC.length]}" aria-hidden="true">${m?m[0].toUpperCase():"?"}</span>`};
 /* profile view / edit */
 function pshow(v){$("pview").hidden=!v;$("pf").hidden=v}
-function pfill(u,b){$("vn").textContent=u||"";$("vb").textContent=b||"";$("vb").hidden=!b}
+function pfill(u,b){$("vav").innerHTML=av(u||"?",true);$("vn").textContent=u||"";$("vb").textContent=b||"";$("vb").hidden=!b}
 $("edit").onclick=()=>{$("vs").textContent="";pm("");pshow(false)};
 $("cancel").onclick=()=>{pm("");pshow(!!$("vn").textContent)};
 
