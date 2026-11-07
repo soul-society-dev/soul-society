@@ -50,6 +50,15 @@ footer{padding:0 18px 36px;text-align:center;color:var(--muted);font-size:.85rem
 .bar .a{background:#1E7FCB}.bar .b{background:#C8323C;justify-content:flex-end}
 @media (max-width:640px){.vs{grid-template-columns:1fr}.vs i{text-align:center}}
 @media (prefers-reduced-motion:reduce){.vs svg,.bar span{transition:none}}
+.disc{margin:0 0 40px}.disc h2{margin-bottom:14px}
+.th{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);padding:16px;margin-bottom:12px}
+.th h3{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:2px}
+.th .by{color:var(--muted);font-size:.85rem}.th p{margin:8px 0;white-space:pre-wrap;word-break:break-word}
+.th details{margin-top:8px}.th summary{cursor:pointer;color:var(--muted);font-size:.92rem}
+.rp{border-left:3px solid var(--line);padding:4px 0 4px 12px;margin:10px 0}
+.dform input,.dform textarea{display:block;width:100%;font:inherit;padding:11px;margin-bottom:8px;background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.dform textarea{min-height:70px}.dform .btn{border:0;cursor:pointer}
+.sm{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;font-size:.85rem;text-decoration:underline;padding:0}
 </style>
 </head>
 <body>
@@ -138,7 +147,7 @@ if(!s){
     m.innerHTML=`<div class="note">${s[9]?"This feature is still being built. Here is what is planned.":"This page shows sample content so you can see how it will look. Real posts and activity appear once member accounts go live."}</div>
     <p class="intro">${s[3]}</p>
     <div class="grid">
-      <div class="box"><h2>${T[0]}</h2><ul>${li(s[4])}</ul></div>
+      ${s[9]?`<div class="box"><h2>${T[0]}</h2><ul>${li(s[4])}</ul></div>`:""}
       <div class="box"><h2>${T[1]}</h2><ul>${li(s[5])}</ul></div>
       <div class="box"><h2>${T[2]}</h2><ul>${li(s[6])}</ul></div>
       <div class="box"><h2>${T[3]}</h2><ul>${li(s[7])}</ul></div>
@@ -162,39 +171,97 @@ if(s&&id==="ss-battle-ground"){
 }
 try{if(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member"))document.getElementById("lg").textContent="My account"}catch(e){}
 
-/* signed-in members: show membership instead of the join button */
-(async()=>{
-  const NAMES=["Anime Hub","Hentai Paradise","Gamers Society","CineRealm","NovelUp Book Club","SS Battle Ground","Music Society","MMM Society"];
-  if(!s||!NAMES.includes(s[0]))return;
-  const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP",SK="ss-member";
+/* members: membership status and discussions */
+const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP",SK="ss-member";
+let _ses=null;
+const getSes=()=>_ses||(_ses=(async()=>{
   try{
     let bucket=localStorage,raw=localStorage.getItem(SK);
     if(!raw){bucket=sessionStorage;raw=sessionStorage.getItem(SK)}
-    if(!raw)return;
-    const rt=JSON.parse(raw).rt;if(!rt)return;
+    if(!raw)return null;
+    const rt=JSON.parse(raw).rt;if(!rt)return null;
     const tr=await fetch(SB+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:rt})});
-    if(!tr.ok)return;
-    const ses=await tr.json();
-    try{bucket.setItem(SK,JSON.stringify({rt:ses.refresh_token}))}catch(e){}
-    const uid=ses.user&&ses.user.id;if(!uid)return;
-    const h={apikey:KEY,Authorization:"Bearer "+ses.access_token,"Content-Type":"application/json"};
-    const r=await fetch(SB+"/rest/v1/members?user_id=eq."+encodeURIComponent(uid)+"&select=societies",{headers:h});
-    const rows=await r.json();
-    if(!Array.isArray(rows)||!rows[0])return;
-    const mine=rows[0].societies||[],jn=document.getElementById("jn");
-    const member=()=>{jn.textContent="\u2713 You\u2019re a member";jn.href="member.html";jn.onclick=null};
-    if(mine.includes(s[0])){member();return}
-    if(id==="hentai-paradise")return;
+    if(!tr.ok)return null;
+    const d=await tr.json();
+    try{bucket.setItem(SK,JSON.stringify({rt:d.refresh_token}))}catch(e){}
+    return d.user&&d.user.id?{tok:d.access_token,uid:d.user.id}:null;
+  }catch(e){return null}
+})());
+const rest=(path,ses,opt)=>fetch(SB+"/rest/v1/"+path,{...(opt||{}),headers:{apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json",...((opt&&opt.headers)||{})}});
+const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+(async()=>{
+  const NAMES=["Anime Hub","Hentai Paradise","Gamers Society","CineRealm","NovelUp Book Club","SS Battle Ground","Music Society","MMM Society"];
+  if(!s||!NAMES.includes(s[0]))return;
+  const live=id!=="hentai-paradise";
+  let disc=null;
+  if(live){
+    const anchor=m.querySelector(".battle")||m.querySelector(".intro");
+    anchor.insertAdjacentHTML("afterend",'<section class="disc"><h2>Discussions</h2><div id="dbody"><p class="note" style="margin:0">Loading\u2026</p></div></section>');
+    disc=document.getElementById("dbody");
+  }
+  const ses=await getSes();
+  if(!ses){if(disc)disc.innerHTML='<p class="note" style="margin:0">Sign in to read and join the discussions. <a href="member.html">Sign in</a> or <a href="join.html">apply to join</a>.</p>';return}
+  let mine=null;
+  try{const r=await rest("members?user_id=eq."+encodeURIComponent(ses.uid)+"&select=societies",ses);const rows=await r.json();if(Array.isArray(rows)&&rows[0])mine=rows[0].societies||[]}catch(e){}
+  if(!mine){if(disc)disc.innerHTML='<p class="note" style="margin:0">Your account is waiting for approval. Discussions open once an administrator approves your application.</p>';return}
+
+  const jn=document.getElementById("jn");
+  const member=()=>{jn.textContent="\u2713 You\u2019re a member";jn.href="member.html";jn.onclick=null};
+  let load=()=>{};
+  if(mine.includes(s[0]))member();
+  else if(live){
     jn.textContent="Join this society";jn.href="#";
     jn.onclick=async e=>{
       e.preventDefault();jn.textContent="Joining\u2026";
       try{
-        const p=await fetch(SB+"/rest/v1/members?user_id=eq."+encodeURIComponent(uid),{method:"PATCH",headers:{...h,Prefer:"return=minimal"},body:JSON.stringify({societies:[...mine,s[0]]})});
+        const p=await rest("members?user_id=eq."+encodeURIComponent(ses.uid),ses,{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({societies:[...mine,s[0]]})});
         if(!p.ok)throw new Error(p.status);
-        mine.push(s[0]);member();
+        mine.push(s[0]);member();load();
       }catch(err){jn.textContent="Could not join. Try again."}
     };
-  }catch(e){}
+  }
+  if(!live)return;
+
+  /* discussions */
+  let openId=null;
+  const when=d=>new Date(d).toLocaleDateString();
+  load=async()=>{
+    let rows=[];
+    try{const r=await rest("posts?select=*&society=eq."+encodeURIComponent(s[0])+"&order=created_at.asc&limit=300",ses);rows=await r.json();if(!Array.isArray(rows))rows=[]}
+    catch(e){disc.innerHTML='<p class="note" style="margin:0">Could not load discussions.</p>';return}
+    const tops=rows.filter(x=>!x.parent_id).reverse(),reps={};
+    rows.filter(x=>x.parent_id).forEach(x=>(reps[x.parent_id]=reps[x.parent_id]||[]).push(x));
+    const can=mine.includes(s[0]);
+    const form=can?'<form class="dform th" id="nf"><h3>Start a discussion</h3><input id="nt" required maxlength="90" placeholder="Title" aria-label="Title"><textarea id="nb" required maxlength="1000" placeholder="What do you want to talk about?" aria-label="Message"></textarea><button class="btn" type="submit">Post</button> <span class="by" id="nm"></span></form>':'<p class="note" style="margin:0 0 14px">Join this society to start discussions and reply.</p>';
+    const del=x=>x.author_id===ses.uid?`<button class="sm" type="button" data-del="${esc(x.id)}">Delete</button>`:"";
+    disc.innerHTML=form+(tops.length?tops.map(t=>{
+      const rs=reps[t.id]||[];
+      return `<div class="th"><h3>${esc(t.title)}</h3><div class="by">${esc(t.author_name)} \u00b7 ${esc(when(t.created_at))}</div><p>${esc(t.body)}</p>${del(t)}
+      <details${t.id===openId?" open":""}><summary>${rs.length} ${rs.length===1?"reply":"replies"}</summary>${rs.map(r=>`<div class="rp"><div class="by">${esc(r.author_name)} \u00b7 ${esc(when(r.created_at))}</div><p>${esc(r.body)}</p>${del(r)}</div>`).join("")}${can?`<form class="dform" data-reply="${esc(t.id)}"><textarea required maxlength="1000" placeholder="Write a reply" aria-label="Reply"></textarea><button class="btn" type="submit">Reply</button></form>`:""}</details></div>`}).join(""):'<p class="note" style="margin:0">No discussions yet. Be the first to start one.</p>');
+  };
+  disc.addEventListener("submit",async e=>{
+    e.preventDefault();const f=e.target,btn=f.querySelector("button");btn.disabled=true;
+    try{
+      let body;
+      if(f.id==="nf")body={society:s[0],title:f.querySelector("#nt").value.trim(),body:f.querySelector("#nb").value.trim()};
+      else{openId=f.dataset.reply;body={society:s[0],parent_id:f.dataset.reply,body:f.querySelector("textarea").value.trim()}}
+      const r=await rest("posts",ses,{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(body)});
+      if(!r.ok)throw new Error(r.status);
+      await load();
+    }catch(err){
+      const nm=document.getElementById("nm");
+      if(f.id==="nf"&&nm)nm.textContent="Could not post. Try again.";else btn.textContent="Could not send. Try again";
+      btn.disabled=false;
+    }
+  });
+  disc.addEventListener("click",async e=>{
+    const b=e.target.closest("button[data-del]");if(!b)return;
+    if(!confirm("Delete this? This cannot be undone."))return;
+    try{const r=await rest("posts?id=eq."+encodeURIComponent(b.dataset.del),ses,{method:"DELETE"});if(!r.ok)throw new Error(r.status);await load()}
+    catch(err){b.textContent="Could not delete"}
+  });
+  await load();
 })();
 </script>
 </body>
