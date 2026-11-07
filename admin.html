@@ -34,6 +34,8 @@ button{cursor:pointer;border:0;padding:10px 16px;font-weight:700;border-radius:2
 .ok{background:#2E7D4F;color:#fff}.no{background:#8A2A33;color:#fff}.undo{background:#262B45;color:#E9ECF5}
 .rem{display:flex;gap:8px;align-items:center;margin:0 0 12px;color:#A0A7C4;font-size:.9rem}.rem input{width:auto;margin:0}
 .vtab{background:#131728;color:#E9ECF5;border:1px solid #262B45}.vtab[aria-pressed="true"]{border-color:#D9A441;color:#D9A441}
+select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;color:#E9ECF5;border:1px solid #262B45;font:inherit}textarea{min-height:80px}
+#af,#ef{margin-top:16px}
 #msg{color:#D9A441;min-height:1.4em;margin-top:8px}
 .chk{display:flex;gap:10px;align-items:center;margin:2px 0 14px;color:#A0A7C4}.chk input{width:auto;margin:0}
 </style>
@@ -55,6 +57,7 @@ button{cursor:pointer;border:0;padding:10px 16px;font-weight:700;border-radius:2
     <div class="bar" id="views">
       <button class="vtab" data-v="apps" type="button" aria-pressed="true">Applications</button>
       <button class="vtab" data-v="mems" type="button" aria-pressed="false">Members</button>
+      <button class="vtab" data-v="cont" type="button" aria-pressed="false">Content</button>
       <button class="out" id="out" type="button">Sign out</button>
     </div>
     <div id="appsView">
@@ -67,6 +70,26 @@ button{cursor:pointer;border:0;padding:10px 16px;font-weight:700;border-radius:2
     <div id="list" aria-live="polite"></div>
     </div>
     <div id="memsView" hidden><div id="mlist" aria-live="polite"></div></div>
+    <div id="contView" hidden>
+      <div class="m" id="cmsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
+      <form class="c" id="af">
+        <h2>New announcement</h2>
+        <input id="at" required maxlength="90" placeholder="Title" aria-label="Announcement title">
+        <textarea id="ab" maxlength="300" placeholder="Message (optional)" aria-label="Message"></textarea>
+        <select id="as" aria-label="Society"></select>
+        <button class="gold" type="submit">Publish announcement</button>
+      </form>
+      <div id="alist"></div>
+      <form class="c" id="ef">
+        <h2>New event</h2>
+        <input id="et" required maxlength="90" placeholder="Event title" aria-label="Event title">
+        <input id="ed" type="date" required aria-label="Event date">
+        <select id="es" aria-label="Society"></select>
+        <textarea id="ex" maxlength="200" placeholder="Details (optional)" aria-label="Details"></textarea>
+        <button class="gold" type="submit">Publish event</button>
+      </form>
+      <div id="elist"></div>
+    </div>
   </div>
   <div id="msg" role="status"></div>
 </div>
@@ -184,9 +207,48 @@ function drawMembers(){
 $("views").addEventListener("click",e=>{
   const b=e.target.closest(".vtab");if(!b)return;
   const v=b.dataset.v;
-  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";
+  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";
   document.querySelectorAll(".vtab").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
   if(v==="mems")loadMembers();
+  if(v==="cont")loadContent();
+});
+
+/* announcements and events */
+const SOC=["Anime Hub","Gamers Society","CineRealm","NovelUp Book Club","SS Battle Ground","Music Society","MMM Society"];
+const opts='<option value="">All societies</option>'+SOC.map(s=>`<option>${esc(s)}</option>`).join("");
+$("as").innerHTML=opts;$("es").innerHTML=opts;
+const cm=t=>{$("cmsg").textContent=t};
+const fdate=d=>new Date(d+"T00:00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+async function loadContent(){
+  try{
+    const [ra,re]=await Promise.all([api(SB+"/rest/v1/announcements?select=*&order=created_at.desc"),api(SB+"/rest/v1/events?select=*&order=event_date.asc")]);
+    if(ra.status===401||re.status===401){signOut("Your session expired. Sign in again.");return}
+    const an=await ra.json(),ev=await re.json();
+    $("alist").innerHTML=(Array.isArray(an)&&an.length)?an.map(x=>`<div class="c"><h2>${esc(x.title)}</h2><div class="m">${esc(x.society||"All societies")}</div>${x.body?`<div class="note">${esc(x.body)}</div>`:""}<div class="act"><button class="no" data-del="announcements" data-id="${esc(x.id)}">Delete</button></div></div>`).join(""):'<p class="m">No announcements yet.</p>';
+    $("elist").innerHTML=(Array.isArray(ev)&&ev.length)?ev.map(x=>`<div class="c"><h2>${esc(x.title)}</h2><div class="m">${esc(fdate(x.event_date))} · ${esc(x.society||"All societies")}</div>${x.details?`<div class="note">${esc(x.details)}</div>`:""}<div class="act"><button class="no" data-del="events" data-id="${esc(x.id)}">Delete</button></div></div>`).join(""):'<p class="m">No events yet.</p>';
+  }catch(err){cm("Could not load content. Check your connection.")}
+}
+async function publish(table,body,form){
+  const b=form.querySelector("button");b.disabled=true;cm("Publishing…");
+  try{
+    const r=await api(SB+"/rest/v1/"+table,{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(body)});
+    if(r.status===401){signOut("Your session expired. Sign in again.");return}
+    if(!r.ok)throw new Error(r.status);
+    form.reset();cm("Published.");loadContent();
+  }catch(err){cm("Could not publish. Try again.")}
+  b.disabled=false;
+}
+$("af").addEventListener("submit",e=>{e.preventDefault();publish("announcements",{title:$("at").value.trim(),body:$("ab").value.trim()||null,society:$("as").value||null},e.target)});
+$("ef").addEventListener("submit",e=>{e.preventDefault();publish("events",{title:$("et").value.trim(),event_date:$("ed").value,society:$("es").value||null,details:$("ex").value.trim()||null},e.target)});
+$("contView").addEventListener("click",async e=>{
+  const b=e.target.closest("button[data-del]");if(!b)return;
+  if(!confirm("Delete this? This cannot be undone."))return;
+  b.disabled=true;
+  try{
+    const r=await api(SB+"/rest/v1/"+b.dataset.del+"?id=eq."+encodeURIComponent(b.dataset.id),{method:"DELETE"});
+    if(!r.ok)throw new Error(r.status);
+    cm("Deleted.");loadContent();
+  }catch(err){cm("Could not delete. Try again.");b.disabled=false}
 });
 
 (async()=>{
