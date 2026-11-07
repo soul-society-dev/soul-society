@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0C16'/%3E%3Ccircle cx='40' cy='24' r='12' fill='%23E9ECF5'/%3E%3Cpath d='M0 64V48l8-4 8 8 8-14 8 12 8-8 24 10v12z' fill='%23D9A441'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="theme-color" content="#0A0C16">
@@ -10,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#EEF1F8;--ink:#12152A;--card:#fff;--muted:#4F5575;--line:#C9CFE3;--blue:#1E7FCB;--gold:#9A6B0F;--red:#C8323C;
+:root{color-scheme:dark;--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45;--blue:#5AB7FF;--gold:#D9A441;--red:#FF6A73;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45;--blue:#5AB7FF;--gold:#D9A441}}
 :root[data-theme="dark"]{--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45;--blue:#5AB7FF;--gold:#D9A441}
@@ -145,6 +146,7 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
 .vsrow div{font-weight:700}.vsrow svg{display:block;width:84px;height:84px;margin:0 auto 6px}
 .vsrow i{font-style:normal;font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;color:#C8323C;font-size:1.5rem}
 
+.phead .moon{opacity:.28;animation:none}
 </style>
 </head>
 <body data-page="happening">
@@ -242,6 +244,7 @@ if(jf){
 const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP";
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+const fmt=s=>esc(s).replace(/\\(.)/g,"$1").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*(.+?)\*/g,"<i>$1</i>").replace(/\n/g,"<br>");
 const col={"Anime Hub":"#5AB7FF","Gamers Society":"#7BD88F","CineRealm":"#D9A441","NovelUp Book Club":"#B58CFF","SS Battle Ground":"#FF7A59","Music Society":"#FF6FAE","MMM Society":"#4DD0C4"};
 const d=new Date(),ymd=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const fdate=s=>new Date(s+"T00:00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
@@ -254,7 +257,7 @@ const hd={apikey:KEY};
     const an=await ra.json(),ev=await re.json();
     document.getElementById("anList").innerHTML=(Array.isArray(an)&&an.length)?an.map(x=>{
       const c=col[x.society]||"#D9A441",tag=x.society?"a":"div",lnk=x.society?` href="society.html?s=${slug(x.society)}"`:"";
-      return `<${tag} class="fi" style="--c:${c}"${lnk}><div><b>${esc(x.title)}</b><span>${esc(x.society||"All societies")} · ${esc(new Date(x.created_at).toLocaleDateString())}${x.body?"<br>"+esc(x.body):""}</span></div></${tag}>`}).join(""):'<p class="sub">No announcements yet. Check back soon.</p>';
+      return `<${tag} class="fi" style="--c:${c}"${lnk}><div><b>${esc(x.title)}</b><span>${esc(x.society||"All societies")} · ${esc(new Date(x.created_at).toLocaleDateString())}${x.body?"<br>"+fmt(x.body):""}</span></div></${tag}>`}).join(""):'<p class="sub">No announcements yet. Check back soon.</p>';
     document.getElementById("evList").innerHTML=(Array.isArray(ev)&&ev.length)?ev.map(x=>`<div class="ev"><div class="d">${esc(fdate(x.event_date))}</div><h3>${esc(x.title)}</h3><p>${esc(x.society||"All societies")}${x.details?". "+esc(x.details):""}</p></div>`).join(""):'<p class="sub">No upcoming events yet.</p>';
   }catch(e){
     document.getElementById("anList").innerHTML='<p class="sub">Could not load updates right now.</p>';

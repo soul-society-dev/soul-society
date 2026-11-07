@@ -50,11 +50,12 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
 #msg{margin-top:16px;min-height:1.5em;color:#D9A441;font-weight:700}
 .av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--c);color:#0A0C16;font-weight:800;font-size:.9rem;flex:none}.av.big{width:64px;height:64px;font-size:1.6rem}
 .avr{display:flex;align-items:center;gap:14px;margin-bottom:6px}.avr .pn{margin:0}
+.strip{display:flex;align-items:center;gap:14px;background:#131728;border:1px solid #262B45;border-left:5px solid #5AB7FF;padding:14px 18px;text-decoration:none;color:inherit}.strip .sn2{flex:1}.strip b{display:block;font-size:1.05rem}.strip .sn2 span{color:#A0A7C4;font-size:.9rem}.strip .av{width:48px;height:48px;font-size:1.2rem}.strip:hover{border-left-color:#D9A441}
 </style>
 </head>
 <body>
 <header class="top"><div class="in"><a class="logo" href="index.html">Soul Society</a><button class="ghost" id="out" hidden type="button">Sign out</button></div>
-<nav class="sn" aria-label="Site"><a href="index.html">Home</a><a href="societies.html">Societies</a><a href="happening.html">What&rsquo;s happening</a><a href="entertainment.html">Entertainment</a></nav></header>
+<nav class="sn" aria-label="Site"><a href="index.html">Home</a><a href="societies.html">Societies</a><a href="happening.html">What&rsquo;s happening</a><a href="entertainment.html">Entertainment</a><a href="profile.html">Profile</a></nav></header>
 <main class="wrap">
 
 <section id="auth" class="box" hidden>
@@ -91,23 +92,8 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
   </div>
 
   <div id="mem" hidden>
+    <a class="strip" href="profile.html"><span id="hav"></span><span class="sn2"><b id="hn"></b><span>View and edit your profile</span></span><span aria-hidden="true">&rarr;</span></a>
     <div class="grid">
-      <div class="card">
-        <h2>Your profile</h2>
-        <div id="pview" hidden>
-          <div class="avr"><span id="vav"></span><p class="pn" id="vn"></p></div>
-          <p class="pb" id="vb"></p>
-          <button class="ghost" id="edit" type="button">Edit profile</button>
-          <p class="note" id="vs" role="status"></p>
-        </div>
-        <form id="pf">
-          <input id="un" maxlength="24" placeholder="Username (letters, numbers, _)" aria-label="Username" autocomplete="nickname">
-          <textarea id="bio" maxlength="200" placeholder="A short bio (optional)" aria-label="Bio"></textarea>
-          <button class="gold" type="submit">Save profile</button>
-          <button class="ghost" id="cancel" type="button" style="margin-top:10px">Cancel</button>
-          <div id="pmsg" class="note" role="status"></div>
-        </form>
-      </div>
       <div class="card gold-top">
         <h2>Your societies</h2>
         <div class="chips" id="soc"></div>
@@ -189,7 +175,7 @@ async function loadMember(){
   }
   const name=m.username||(m.email||mail).split("@")[0];
   $("hi").textContent="Welcome, "+name;$("hisub").textContent="Member of Soul Society";
-  $("un").value=m.username||"";$("bio").value=m.bio||"";pfill(m.username,m.bio);pshow(!!m.username);
+  $("hav").innerHTML=av(name);$("hn").textContent=name;
   const soc=m.societies||[];
   $("soc").innerHTML=soc.length?soc.map(s=>`<a href="society.html?s=${slug(s)}">${esc(s)}</a>`).join(""):'<span class="note">You haven\u2019t picked any societies yet.</span>';
   $("mem").hidden=false;
@@ -240,18 +226,6 @@ $("forgot").onclick=async()=>{
   }catch(err){msg("Could not send the reset email. Try again.")}
 };
 
-/* profile */
-$("pf").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const u=$("un").value.trim(),bio=$("bio").value.trim();
-  if(u&&!/^[A-Za-z0-9_]{3,24}$/.test(u)){pm("Usernames use 3 to 24 letters, numbers or underscores. No spaces or dashes.");return}
-  try{
-    const r=await api(SB+"/rest/v1/members?user_id=eq."+encodeURIComponent(uid),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({username:u||null,bio:bio||null})});
-    if(!r.ok)throw new Error(r.status);
-    pfill(u,bio);pshow(!!u);$("vs").textContent="Profile saved.";pm("");$("hi").textContent="Welcome, "+(u||mail.split("@")[0]);
-  }catch(err){pm("Could not save your profile. Try again.")}
-});
-
 /* announcements and events from the admins */
 async function loadFeed(soc){
   const d=new Date(),ymd=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
@@ -263,18 +237,14 @@ async function loadFeed(soc){
       fetch(SB+"/rest/v1/events?select=*&event_date=gte."+ymd+"&order=event_date.asc&limit=20",{headers:hd})]);
     const an=(await ra.json()).filter(x=>!x.society||soc.includes(x.society)).slice(0,5);
     const ev=(await re.json()).filter(x=>!x.society||soc.includes(x.society)).slice(0,5);
-    $("mAn").innerHTML=an.length?an.map(x=>`<li><b>${esc(x.title)}</b>${x.body?" \u2013 "+esc(x.body):""}</li>`).join(""):"<li>No announcements yet.</li>";
+    $("mAn").innerHTML=an.length?an.map(x=>`<li><b>${esc(x.title)}</b>${x.body?" \u2013 "+fmt(x.body):""}</li>`).join(""):"<li>No announcements yet.</li>";
     $("mEv").innerHTML=ev.length?ev.map(x=>`<li>${esc(fdate(x.event_date))}: ${esc(x.title)}</li>`).join(""):"<li>No upcoming events yet.</li>";
   }catch(e){$("mAn").innerHTML="<li>Could not load announcements.</li>";$("mEv").innerHTML="<li>Could not load events.</li>"}
 }
 
 const AVC=["#5AB7FF","#7BD88F","#D9A441","#B58CFF","#FF7A59","#FF6FAE","#4DD0C4","#9AA7FF"];
 const av=(n,big)=>{n=String(n||"?");let h=0;for(const c of n)h=(h*31+c.codePointAt(0))>>>0;const m=n.match(/[A-Za-z0-9]/);return `<span class="av${big?" big":""}" style="--c:${AVC[h%AVC.length]}" aria-hidden="true">${m?m[0].toUpperCase():"?"}</span>`};
-/* profile view / edit */
-function pshow(v){$("pview").hidden=!v;$("pf").hidden=v}
-function pfill(u,b){$("vav").innerHTML=av(u||"?",true);$("vn").textContent=u||"";$("vb").textContent=b||"";$("vb").hidden=!b}
-$("edit").onclick=()=>{$("vs").textContent="";pm("");pshow(false)};
-$("cancel").onclick=()=>{pm("");pshow(!!$("vn").textContent)};
+const fmt=s=>esc(s).replace(/\\(.)/g,"$1").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*(.+?)\*/g,"<i>$1</i>").replace(/\n/g,"<br>");
 
 /* start: confirmation link, saved session, or sign-in form */
 (async()=>{
