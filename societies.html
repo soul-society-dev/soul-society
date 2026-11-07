@@ -165,7 +165,8 @@ const S=[
  ["MMM Society","Manga, manhwa and manhua: lists, reviews, chapter talk.","#4DD0C4"]
 ];
 const F=[["Anime Hub","New anime recommendation posted."],["Gamers Society","A multiplayer room is open."],["Music Society","Karaoke begins Saturday."],["SS Battle Ground","Gojo vs Sukuna voting is underway."],["MMM Society","New reading challenge announced."]];
-const NAV=[["index.html","Home","home"],["societies.html","Societies","societies"],["happening.html","What\u2019s happening","happening"],["entertainment.html","Entertainment","entertainment"],["join.html","Join","join"]];
+const SIGNED=(()=>{try{return !!JSON.parse(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member")||"null")}catch(e){return false}})();
+const NAV=[["index.html","Home","home"],["societies.html","Societies","societies"],["happening.html","What\u2019s happening","happening"],["entertainment.html","Entertainment","entertainment"],["member.html",SIGNED?"My account":"Log in","member"],["join.html","Join","join"]];
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
 const $=id=>document.getElementById(id);
 const page=document.body.dataset.page||"";

@@ -109,13 +109,11 @@ button{cursor:pointer;border:0;padding:12px 18px;font-weight:700;border-radius:2
       </div>
       <div class="card pink">
         <h2>Announcements</h2>
-        <ul><li>Membership is open. Welcome to Soul Society.</li><li>Gojo vs Sukuna voting is underway.</li></ul>
-        <p class="note">Sample announcements for now.</p>
+        <ul id="mAn"><li>Loading…</li></ul>
       </div>
       <div class="card green">
         <h2>Coming up</h2>
-        <ul><li>Fri 6 Nov: gaming tournament night</li><li>Sat 7 Nov: themed karaoke night</li><li>Sun 8 Nov: chapter discussion</li></ul>
-        <p class="note">Sample events for now.</p>
+        <ul id="mEv"><li>Loading…</li></ul>
       </div>
       <div class="card">
         <h2>Badges and achievements</h2>
@@ -138,8 +136,8 @@ const pm=t=>{$("pmsg").textContent=t};
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
 const base=()=>location.origin+location.pathname.replace(/[^/]*$/,"");
 const hdr=()=>({apikey:KEY,Authorization:"Bearer "+tok,"Content-Type":"application/json"});
-const store=d=>{if(!keep)return;try{localStorage.setItem(SK,JSON.stringify({rt:d.refresh_token}))}catch(e){}};
-const unstore=()=>{try{localStorage.removeItem(SK)}catch(e){}};
+const store=d=>{try{(keep?localStorage:sessionStorage).setItem(SK,JSON.stringify({rt:d.refresh_token}))}catch(e){}};
+const unstore=()=>{try{localStorage.removeItem(SK);sessionStorage.removeItem(SK)}catch(e){}};
 
 async function token(body,grant){
   const r=await fetch(SB+"/auth/v1/token?grant_type="+grant,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
@@ -149,9 +147,9 @@ async function token(body,grant){
 }
 async function refresh(){
   let rt=null;
-  try{const s=JSON.parse(localStorage.getItem(SK)||"null");rt=s&&s.rt}catch(e){}
+  try{const s=JSON.parse(localStorage.getItem(SK)||sessionStorage.getItem(SK)||"null");rt=s&&s.rt}catch(e){}
   if(!rt)return false;
-  keep=true;
+  try{keep=!!localStorage.getItem(SK)}catch(e){keep=true}
   try{await token({refresh_token:rt},"refresh_token");return true}catch(e){unstore();return false}
 }
 async function api(url,opt){
@@ -190,6 +188,7 @@ async function loadMember(){
   const soc=m.societies||[];
   $("soc").innerHTML=soc.length?soc.map(s=>`<a href="society.html?s=${slug(s)}">${esc(s)}</a>`).join(""):'<span class="note">You haven\u2019t picked any societies yet.</span>';
   $("mem").hidden=false;
+  loadFeed(soc);
 }
 $("again").onclick=async()=>{msg("Checking\u2026");try{await loadMember();msg("")}catch(e){msg("Could not check. Try again.")}};
 
@@ -247,6 +246,22 @@ $("pf").addEventListener("submit",async e=>{
     pfill(u,bio);pshow(!!u);$("vs").textContent="Profile saved.";pm("");$("hi").textContent="Welcome, "+(u||mail.split("@")[0]);
   }catch(err){pm("Could not save your profile. Try again.")}
 });
+
+/* announcements and events from the admins */
+async function loadFeed(soc){
+  const d=new Date(),ymd=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const fdate=s=>new Date(s+"T00:00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
+  const hd={apikey:KEY};
+  try{
+    const [ra,re]=await Promise.all([
+      fetch(SB+"/rest/v1/announcements?select=*&order=created_at.desc&limit=20",{headers:hd}),
+      fetch(SB+"/rest/v1/events?select=*&event_date=gte."+ymd+"&order=event_date.asc&limit=20",{headers:hd})]);
+    const an=(await ra.json()).filter(x=>!x.society||soc.includes(x.society)).slice(0,5);
+    const ev=(await re.json()).filter(x=>!x.society||soc.includes(x.society)).slice(0,5);
+    $("mAn").innerHTML=an.length?an.map(x=>`<li><b>${esc(x.title)}</b>${x.body?" \u2013 "+esc(x.body):""}</li>`).join(""):"<li>No announcements yet.</li>";
+    $("mEv").innerHTML=ev.length?ev.map(x=>`<li>${esc(fdate(x.event_date))}: ${esc(x.title)}</li>`).join(""):"<li>No upcoming events yet.</li>";
+  }catch(e){$("mAn").innerHTML="<li>Could not load announcements.</li>";$("mEv").innerHTML="<li>Could not load events.</li>"}
+}
 
 /* profile view / edit */
 function pshow(v){$("pview").hidden=!v;$("pf").hidden=v}

@@ -142,6 +142,7 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
 .vsrow div{font-weight:700}.vsrow svg{display:block;width:84px;height:84px;margin:0 auto 6px}
 .vsrow i{font-style:normal;font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;color:#C8323C;font-size:1.5rem}
 
+.latest{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:5px solid #D9A441;padding:14px 18px;margin-bottom:24px;text-decoration:none;color:inherit}.latest[hidden]{display:none}.latest .tg{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}.latest b{flex:1}.latest .mr{color:var(--blue);font-weight:700;font-size:.9rem}
 </style>
 </head>
 <body data-page="home">
@@ -159,6 +160,7 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
 </div></section>
 
 <section><div class="wrap">
+  <a class="latest" id="latest" href="happening.html" hidden><span class="tg">Latest</span><b id="latestT"></b><span class="mr">See updates</span></a>
   <div class="spot">
     <span class="label">Announcement</span>
     <h2>Gojo vs Sukuna: voting is underway</h2>
@@ -187,7 +189,8 @@ const S=[
  ["MMM Society","Manga, manhwa and manhua: lists, reviews, chapter talk.","#4DD0C4"]
 ];
 const F=[["Anime Hub","New anime recommendation posted."],["Gamers Society","A multiplayer room is open."],["Music Society","Karaoke begins Saturday."],["SS Battle Ground","Gojo vs Sukuna voting is underway."],["MMM Society","New reading challenge announced."]];
-const NAV=[["index.html","Home","home"],["societies.html","Societies","societies"],["happening.html","What\u2019s happening","happening"],["entertainment.html","Entertainment","entertainment"],["member.html","Log in","member"],["join.html","Join","join"]];
+const SIGNED=(()=>{try{return !!JSON.parse(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member")||"null")}catch(e){return false}})();
+const NAV=[["index.html","Home","home"],["societies.html","Societies","societies"],["happening.html","What\u2019s happening","happening"],["entertainment.html","Entertainment","entertainment"],["member.html",SIGNED?"My account":"Log in","member"],["join.html","Join","join"]];
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
 const $=id=>document.getElementById(id);
 const page=document.body.dataset.page||"";
@@ -250,6 +253,16 @@ if(jf){
 }
 })();
 
+</script>
+<script>
+(async()=>{
+const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP";
+  try{
+    const r=await fetch(SB+"/rest/v1/announcements?select=title&order=created_at.desc&limit=1",{headers:{apikey:KEY}});
+    const d=await r.json();
+    if(Array.isArray(d)&&d[0]){document.getElementById("latestT").textContent=d[0].title;document.getElementById("latest").hidden=false}
+  }catch(e){}
+})();
 </script>
 </body>
 </html>

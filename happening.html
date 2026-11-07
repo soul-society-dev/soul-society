@@ -148,14 +148,10 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
 <div id="hdr"></div>
 <div class="phead"><div class="wrap"><h1>What’s happening</h1><p>Updates from across the societies, and what’s coming up.</p></div></div>
 <main><section><div class="wrap">
-  <p class="sub">These are sample updates for now. Live updates arrive with member accounts.</p>
+  <p class="sub">The latest from our administrators.</p>
   <div class="two">
-    <div><h3 class="h3">Activity feed</h3><div class="feedlist" id="feedList"></div></div>
-    <div><h3 class="h3">Coming up</h3><div class="evlist">
-      <div class="ev"><div class="d">Fri 6 Nov</div><h3>Gaming tournament night</h3><p>Gamers Society. Sign-ups open to all members.</p></div>
-      <div class="ev"><div class="d">Sat 7 Nov</div><h3>Themed karaoke night</h3><p>Music Society. Suggest songs ahead of time.</p></div>
-      <div class="ev"><div class="d">Sun 8 Nov</div><h3>Chapter discussion</h3><p>MMM Society. Spoiler-free for the first 20 minutes.</p></div>
-    </div></div>
+    <div><h3 class="h3">Announcements</h3><div class="feedlist" id="anList"><p class="sub">Loading…</p></div></div>
+    <div><h3 class="h3">Coming up</h3><div class="evlist" id="evList"><p class="sub">Loading…</p></div></div>
   </div>
 </div></section></main>
 <div id="ftr"></div>
@@ -173,7 +169,8 @@ const S=[
  ["MMM Society","Manga, manhwa and manhua: lists, reviews, chapter talk.","#4DD0C4"]
 ];
 const F=[["Anime Hub","New anime recommendation posted."],["Gamers Society","A multiplayer room is open."],["Music Society","Karaoke begins Saturday."],["SS Battle Ground","Gojo vs Sukuna voting is underway."],["MMM Society","New reading challenge announced."]];
-const NAV=[["index.html","Home","home"],["societies.html","Societies","societies"],["happening.html","What\u2019s happening","happening"],["entertainment.html","Entertainment","entertainment"],["join.html","Join","join"]];
+const SIGNED=(()=>{try{return !!JSON.parse(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member")||"null")}catch(e){return false}})();
+const NAV=[["index.html","Home","home"],["societies.html","Societies","societies"],["happening.html","What\u2019s happening","happening"],["entertainment.html","Entertainment","entertainment"],["member.html",SIGNED?"My account":"Log in","member"],["join.html","Join","join"]];
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
 const $=id=>document.getElementById(id);
 const page=document.body.dataset.page||"";
@@ -236,6 +233,32 @@ if(jf){
 }
 })();
 
+</script>
+<script>
+(function(){
+const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+const col={"Anime Hub":"#5AB7FF","Gamers Society":"#7BD88F","CineRealm":"#D9A441","NovelUp Book Club":"#B58CFF","SS Battle Ground":"#FF7A59","Music Society":"#FF6FAE","MMM Society":"#4DD0C4"};
+const d=new Date(),ymd=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const fdate=s=>new Date(s+"T00:00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
+const hd={apikey:KEY};
+(async()=>{
+  try{
+    const [ra,re]=await Promise.all([
+      fetch(SB+"/rest/v1/announcements?select=*&order=created_at.desc&limit=12",{headers:hd}),
+      fetch(SB+"/rest/v1/events?select=*&event_date=gte."+ymd+"&order=event_date.asc&limit=12",{headers:hd})]);
+    const an=await ra.json(),ev=await re.json();
+    document.getElementById("anList").innerHTML=(Array.isArray(an)&&an.length)?an.map(x=>{
+      const c=col[x.society]||"#D9A441",tag=x.society?"a":"div",lnk=x.society?` href="society.html?s=${slug(x.society)}"`:"";
+      return `<${tag} class="fi" style="--c:${c}"${lnk}><div><b>${esc(x.title)}</b><span>${esc(x.society||"All societies")} · ${esc(new Date(x.created_at).toLocaleDateString())}${x.body?"<br>"+esc(x.body):""}</span></div></${tag}>`}).join(""):'<p class="sub">No announcements yet. Check back soon.</p>';
+    document.getElementById("evList").innerHTML=(Array.isArray(ev)&&ev.length)?ev.map(x=>`<div class="ev"><div class="d">${esc(fdate(x.event_date))}</div><h3>${esc(x.title)}</h3><p>${esc(x.society||"All societies")}${x.details?". "+esc(x.details):""}</p></div>`).join(""):'<p class="sub">No upcoming events yet.</p>';
+  }catch(e){
+    document.getElementById("anList").innerHTML='<p class="sub">Could not load updates right now.</p>';
+    document.getElementById("evList").innerHTML='<p class="sub">Could not load events right now.</p>';
+  }
+})();
+})();
 </script>
 </body>
 </html>

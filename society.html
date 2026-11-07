@@ -53,7 +53,7 @@ footer{padding:0 18px 36px;text-align:center;color:var(--muted);font-size:.85rem
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap"><a class="logo" href="index.html">Soul Society</a><a class="back" href="societies.html">All societies</a></div></header>
+<header class="top"><div class="wrap"><a class="logo" href="index.html">Soul Society</a><span><a class="back" href="societies.html">All societies</a> &nbsp; <a class="back" id="lg" href="member.html">Log in</a></span></div></header>
 <div class="head"><div class="wrap"><h1 id="nm">Society</h1><p id="tg"></p><a class="btn" id="jn" href="join.html">Join this society</a></div></div>
 <main class="wrap" id="main"></main>
 <footer>Soul Society is an independent fan community. It is not affiliated with or endorsed by any studio, publisher or rights holder.</footer>
@@ -160,6 +160,7 @@ if(s&&id==="ss-battle-ground"){
   const vote=k=>{if(v.pick===k)return;if(v.pick)v[v.pick]--;v[k]++;v.pick=k;try{localStorage.setItem(K,JSON.stringify(v))}catch(e){}draw()};
   A.onclick=()=>vote("a");B.onclick=()=>vote("b");draw();
 }
+try{if(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member"))document.getElementById("lg").textContent="My account"}catch(e){}
 </script>
 </body>
 </html>
