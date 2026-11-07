@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SS Admin">
+<meta name="theme-color" content="#0A0C16">
 <title>Soul Society Admin</title>
 <style>
 :root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -29,7 +32,10 @@ button{cursor:pointer;border:0;padding:10px 16px;font-weight:700;border-radius:2
 .st.approved{color:#7BD88F;border-color:#7BD88F}.st.rejected{color:#FF8A8F;border-color:#FF8A8F}
 .act{display:flex;gap:8px;margin-top:10px}
 .ok{background:#2E7D4F;color:#fff}.no{background:#8A2A33;color:#fff}.undo{background:#262B45;color:#E9ECF5}
+.rem{display:flex;gap:8px;align-items:center;margin:0 0 12px;color:#A0A7C4;font-size:.9rem}.rem input{width:auto;margin:0}
+.vtab{background:#131728;color:#E9ECF5;border:1px solid #262B45}.vtab[aria-pressed="true"]{border-color:#D9A441;color:#D9A441}
 #msg{color:#D9A441;min-height:1.4em;margin-top:8px}
+.chk{display:flex;gap:10px;align-items:center;margin:2px 0 14px;color:#A0A7C4}.chk input{width:auto;margin:0}
 </style>
 </head>
 <body>
@@ -40,53 +46,85 @@ button{cursor:pointer;border:0;padding:10px 16px;font-weight:700;border-radius:2
   <form id="login">
     <input id="em" type="email" required placeholder="Admin email" autocomplete="username" aria-label="Admin email">
     <input id="pw" type="password" required placeholder="Password" autocomplete="current-password" aria-label="Password">
+    <label class="chk"><input id="keep" type="checkbox" checked> Keep me signed in on this phone</label>
+    <label class="rem"><input id="rm" type="checkbox" checked> Keep me signed in on this device</label>
     <button class="gold" type="submit">Sign in</button>
   </form>
 
   <div id="app" hidden>
+    <div class="bar" id="views">
+      <button class="vtab" data-v="apps" type="button" aria-pressed="true">Applications</button>
+      <button class="vtab" data-v="mems" type="button" aria-pressed="false">Members</button>
+      <button class="out" id="out" type="button">Sign out</button>
+    </div>
+    <div id="appsView">
     <div class="bar" id="tabs">
       <button class="tab" data-f="pending" aria-pressed="true">Pending</button>
       <button class="tab" data-f="approved" aria-pressed="false">Approved</button>
       <button class="tab" data-f="rejected" aria-pressed="false">Rejected</button>
       <button class="tab" data-f="all" aria-pressed="false">All</button>
-      <button class="out" id="out" type="button">Sign out</button>
-    </div>
+          </div>
     <div id="list" aria-live="polite"></div>
+    </div>
+    <div id="memsView" hidden><div id="mlist" aria-live="polite"></div></div>
   </div>
   <div id="msg" role="status"></div>
 </div>
 
 <script>
-const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP";
-let tok=null,rows=[],flt="pending";
+const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP",SK="ss-admin";
+let tok=null,rows=[],flt="pending",keep=false;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const msg=t=>{$("msg").textContent=t};
 const hdr=()=>({apikey:KEY,Authorization:"Bearer "+tok,"Content-Type":"application/json"});
+const store=d=>{if(!keep)return;try{localStorage.setItem(SK,JSON.stringify({rt:d.refresh_token}))}catch(e){}};
+const unstore=()=>{try{localStorage.removeItem(SK)}catch(e){}};
 
+async function token(body,grant){
+  const r=await fetch(SB+"/auth/v1/token?grant_type="+grant,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const d=await r.json();
+  if(!r.ok||!d.access_token)throw new Error("auth");
+  tok=d.access_token;store(d);
+}
+async function refresh(){
+  let rt=null;
+  try{const s=JSON.parse(localStorage.getItem(SK)||"null");rt=s&&s.rt}catch(e){}
+  if(!rt)return false;
+  keep=true;
+  try{await token({refresh_token:rt},"refresh_token");return true}catch(e){unstore();return false}
+}
+async function api(url,opt){
+  const go=()=>fetch(url,{...(opt||{}),headers:{...hdr(),...((opt&&opt.headers)||{})}});
+  let r=await go();
+  if(r.status===401&&await refresh())r=await go();
+  return r;
+}
 function signOut(note){
-  tok=null;rows=[];$("app").hidden=true;$("login").hidden=false;msg(note||"");
+  tok=null;rows=[];keep=false;unstore();
+  $("app").hidden=true;$("login").hidden=false;msg(note||"");
+}
+async function enter(){
+  const a=await api(SB+"/rest/v1/admins?select=user_id");
+  const ad=await a.json();
+  if(!Array.isArray(ad)||!ad.length){signOut("This account is not an admin.");return}
+  $("login").hidden=true;$("app").hidden=false;msg("");load();
 }
 $("out").onclick=()=>signOut("Signed out.");
 
 $("login").addEventListener("submit",async e=>{
   e.preventDefault();msg("Signing in…");
+  keep=$("rm").checked;
   try{
-    const r=await fetch(SB+"/auth/v1/token?grant_type=password",{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({email:$("em").value.trim(),password:$("pw").value})});
-    const d=await r.json();
-    if(!r.ok||!d.access_token)throw new Error("login");
-    tok=d.access_token;$("pw").value="";
-    const a=await fetch(SB+"/rest/v1/admins?select=user_id",{headers:hdr()});
-    const ad=await a.json();
-    if(!Array.isArray(ad)||!ad.length){signOut("This account is not an admin.");return}
-    $("login").hidden=true;$("app").hidden=false;msg("");load();
+    await token({email:$("em").value.trim(),password:$("pw").value},"password");
+    $("pw").value="";await enter();
   }catch(err){msg("Sign-in failed. Check your email and password.")}
 });
 
 async function load(){
   $("list").innerHTML='<p class="m">Loading…</p>';
   try{
-    const r=await fetch(SB+"/rest/v1/applications?select=*&order=created_at.desc",{headers:hdr()});
+    const r=await api(SB+"/rest/v1/applications?select=*&order=created_at.desc");
     if(r.status===401){signOut("Your session expired. Sign in again.");return}
     rows=await r.json();draw();
   }catch(err){$("list").innerHTML='<p class="m">Could not load applications. Check your connection.</p>'}
@@ -118,12 +156,44 @@ $("list").addEventListener("click",async e=>{
   const b=e.target.closest("button[data-id]");if(!b)return;
   b.disabled=true;
   try{
-    const r=await fetch(SB+"/rest/v1/applications?id=eq."+encodeURIComponent(b.dataset.id),{method:"PATCH",headers:{...hdr(),Prefer:"return=minimal"},body:JSON.stringify({status:b.dataset.s})});
+    const r=await api(SB+"/rest/v1/applications?id=eq."+encodeURIComponent(b.dataset.id),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({status:b.dataset.s})});
     if(r.status===401){signOut("Your session expired. Sign in again.");return}
     if(!r.ok)throw new Error(r.status);
     rows.find(x=>x.id===b.dataset.id).status=b.dataset.s;msg("");draw();
   }catch(err){msg("Could not update that application. Try again.");b.disabled=false}
 });
+
+let mems=[];
+async function loadMembers(){
+  $("mlist").innerHTML='<p class="m">Loading…</p>';
+  try{
+    const r=await api(SB+"/rest/v1/members?select=*&order=created_at.desc");
+    if(r.status===401){signOut("Your session expired. Sign in again.");return}
+    mems=await r.json();drawMembers();
+  }catch(err){$("mlist").innerHTML='<p class="m">Could not load members. Check your connection.</p>'}
+}
+function drawMembers(){
+  $("mlist").innerHTML=mems.length
+    ?'<p class="m">'+mems.length+(mems.length===1?" member":" members")+'</p>'+mems.map(x=>`<div class="c"><h2>${esc(x.username||"(no username yet)")}</h2>
+      <div class="m">${esc(x.email)}</div>
+      <div class="m">Societies: ${esc((x.societies||[]).join(", ")||"None")}</div>
+      <div class="m">Joined ${esc(new Date(x.created_at).toLocaleDateString())}</div>
+      ${x.bio?`<div class="note">${esc(x.bio)}</div>`:""}</div>`).join("")
+    :'<p class="m">No members yet. They appear here once an approved person creates an account.</p>';
+}
+$("views").addEventListener("click",e=>{
+  const b=e.target.closest(".vtab");if(!b)return;
+  const v=b.dataset.v;
+  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";
+  document.querySelectorAll(".vtab").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  if(v==="mems")loadMembers();
+});
+
+(async()=>{
+  msg("Checking your session…");
+  try{if(await refresh()){await enter();return}}catch(e){}
+  msg("");
+})();
 </script>
 </body>
 </html>
