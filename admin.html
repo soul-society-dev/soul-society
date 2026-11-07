@@ -59,6 +59,7 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
       <button class="vtab" data-v="mems" type="button" aria-pressed="false">Members</button>
       <button class="vtab" data-v="cont" type="button" aria-pressed="false">Content</button>
       <button class="vtab" data-v="mod" type="button" aria-pressed="false">Moderation</button>
+      <button class="vtab" data-v="qs" type="button" aria-pressed="false">Questions</button>
       <button class="out" id="out" type="button">Sign out</button>
     </div>
     <div id="appsView">
@@ -71,6 +72,20 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
     <div id="list" aria-live="polite"></div>
     </div>
     <div id="memsView" hidden><div id="mlist" aria-live="polite"></div></div>
+    <div id="qsView" hidden>
+      <div class="m" id="qmsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
+      <form class="c" id="qf">
+        <h2>New trivia question</h2>
+        <input id="qq" required maxlength="200" placeholder="Question" aria-label="Question">
+        <input id="qa" required maxlength="80" placeholder="Option A" aria-label="Option A">
+        <input id="qb" required maxlength="80" placeholder="Option B" aria-label="Option B">
+        <input id="qc" required maxlength="80" placeholder="Option C" aria-label="Option C">
+        <input id="qd" required maxlength="80" placeholder="Option D" aria-label="Option D">
+        <select id="qr" aria-label="Correct answer"><option value="0">Correct answer: A</option><option value="1">Correct answer: B</option><option value="2">Correct answer: C</option><option value="3">Correct answer: D</option></select>
+        <button class="gold" type="submit">Add question</button>
+      </form>
+      <div id="qlist"></div>
+    </div>
     <div id="modView" hidden>
       <div class="m" id="mmsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
       <h2 style="margin:12px 0 10px;font-family:Georgia,serif">Reported posts</h2>
@@ -215,11 +230,12 @@ function drawMembers(){
 $("views").addEventListener("click",e=>{
   const b=e.target.closest(".vtab");if(!b)return;
   const v=b.dataset.v;
-  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";$("modView").hidden=v!=="mod";
+  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";$("modView").hidden=v!=="mod";$("qsView").hidden=v!=="qs";
   document.querySelectorAll(".vtab").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
   if(v==="mems")loadMembers();
   if(v==="cont")loadContent();
   if(v==="mod")loadMod();
+  if(v==="qs")loadQs();
 });
 
 /* announcements and events */
@@ -258,6 +274,39 @@ $("contView").addEventListener("click",async e=>{
     if(!r.ok)throw new Error(r.status);
     cm("Deleted.");loadContent();
   }catch(err){cm("Could not delete. Try again.");b.disabled=false}
+});
+
+/* trivia questions */
+const qm=t=>{$("qmsg").textContent=t};
+async function loadQs(){
+  try{
+    const r=await api(SB+"/rest/v1/questions?select=*&order=created_at.desc&limit=200");
+    if(r.status===401){signOut("Your session expired. Sign in again.");return}
+    const rows=await r.json();
+    $("qlist").innerHTML=(Array.isArray(rows)&&rows.length)
+      ?'<p class="m">'+rows.length+' custom '+(rows.length===1?'question':'questions')+'. The built-in questions are always included too.</p>'+rows.map(x=>`<div class="c"><h2>${esc(x.question)}</h2><div class="m">A: ${esc(x.opt_a)} · B: ${esc(x.opt_b)} · C: ${esc(x.opt_c)} · D: ${esc(x.opt_d)}</div><div class="m">Correct: ${"ABCD"[x.answer]}</div><div class="act"><button class="no" data-qdel="${esc(x.id)}">Delete</button></div></div>`).join("")
+      :'<p class="m">No custom questions yet. The built-in questions are always included.</p>';
+  }catch(err){qm("Could not load questions. Check your connection.")}
+}
+$("qf").addEventListener("submit",async e=>{
+  e.preventDefault();const b=e.target.querySelector("button");b.disabled=true;qm("Adding…");
+  try{
+    const r=await api(SB+"/rest/v1/questions",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({question:$("qq").value.trim(),opt_a:$("qa").value.trim(),opt_b:$("qb").value.trim(),opt_c:$("qc").value.trim(),opt_d:$("qd").value.trim(),answer:+$("qr").value})});
+    if(r.status===401){signOut("Your session expired. Sign in again.");return}
+    if(!r.ok)throw new Error(r.status);
+    e.target.reset();qm("Question added. It is live in the game.");loadQs();
+  }catch(err){qm("Could not add the question. Check every box is filled in.")}
+  b.disabled=false;
+});
+$("qsView").addEventListener("click",async e=>{
+  const b=e.target.closest("button[data-qdel]");if(!b)return;
+  if(!confirm("Delete this question?"))return;
+  b.disabled=true;
+  try{
+    const r=await api(SB+"/rest/v1/questions?id=eq."+encodeURIComponent(b.dataset.qdel),{method:"DELETE"});
+    if(!r.ok)throw new Error(r.status);
+    qm("Deleted.");loadQs();
+  }catch(err){qm("Could not delete. Try again.");b.disabled=false}
 });
 
 /* moderation */
