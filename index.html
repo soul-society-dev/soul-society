@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0C16'/%3E%3Ccircle cx='40' cy='24' r='12' fill='%23E9ECF5'/%3E%3Cpath d='M0 64V48l8-4 8 8 8-14 8 12 8-8 24 10v12z' fill='%23D9A441'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="theme-color" content="#0A0C16">
 <title>Soul Society – One Realm. Many Worlds. One Community.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
@@ -143,6 +146,8 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
 .vsrow i{font-style:normal;font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;color:#C8323C;font-size:1.5rem}
 
 .latest{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:5px solid #D9A441;padding:14px 18px;margin-bottom:24px;text-decoration:none;color:inherit}.latest[hidden]{display:none}.latest .tg{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}.latest b{flex:1}.latest .mr{color:var(--blue);font-weight:700;font-size:.9rem}
+.tl{display:inline-block;margin-left:20px;color:#E9ECF5;font-weight:700;text-decoration:underline;text-underline-offset:4px}.tl:hover{color:#5AB7FF}
+@media (max-width:760px){.tl{display:block;margin:16px 0 0}}
 </style>
 </head>
 <body data-page="home">
@@ -150,8 +155,8 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
 <div class="hero"><div class="wrap">
   <h1>Soul Society</h1>
   <div class="tag">One Realm. Many Worlds. One Community.</div>
-  <p>Eight societies for anime, games, film, books, music and manga, under one roof. Find your people and join in.</p>
-  <a class="btn" href="societies.html">Explore societies</a><a class="btn ghost" href="join.html">Join the community</a>
+  <p>Anime, games, film, books, music and manga. Eight societies, one community.</p>
+  <a class="btn" id="heroBtn" href="join.html">Join the community</a><a class="tl" href="societies.html">Explore the societies</a>
 </div></div>
 <main>
 <section><div class="wrap narrow">
@@ -263,6 +268,9 @@ const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K
     if(Array.isArray(d)&&d[0]){document.getElementById("latestT").textContent=d[0].title;document.getElementById("latest").hidden=false}
   }catch(e){}
 })();
+</script>
+<script>
+try{if(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member")){const b=document.getElementById("heroBtn");b.textContent="Go to my account";b.href="member.html"}}catch(e){}
 </script>
 </body>
 </html>
