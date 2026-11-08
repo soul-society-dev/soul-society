@@ -197,6 +197,7 @@ main{animation:fadeUp .6s ease both}
 ::selection{background:rgba(232,182,92,.35)}
 @media (prefers-reduced-motion:reduce){main{animation:none}.soc,.ecard,.door,.fi,.btn{transition:none}.soc:hover,.ecard:hover,.door:hover,.btn:hover{transform:none}}
 /* WARM SEIREITEI THEME END */
+.prog{height:6px;background:var(--line);border-radius:99px;margin-bottom:12px;overflow:hidden}.prog span{display:block;height:100%;width:0;background:var(--gold);transition:width .4s}
 </style>
 </head>
 <body data-page="games">
@@ -212,6 +213,7 @@ main{animation:fadeUp .6s ease both}
   </div>
   <div id="play" class="tbox" hidden>
     <div class="tmeta"><span id="qn"></span><span id="sc"></span></div>
+    <div class="prog"><span id="pg"></span></div>
     <div class="timer"><span id="tb"></span></div>
     <h2 id="qt" class="qt"></h2>
     <div id="opts"></div>
@@ -351,7 +353,7 @@ function next(){
   const items=shuffle(q[1].map((t,i)=>({t,c:i===q[2]})));
   locked=false;left=TIME;
   $("qn").textContent="Question "+(qi+1)+" of "+ROUND;
-  $("sc").textContent="Score: "+score;
+  $("sc").textContent="Score: "+score;$("pg").style.width=(qi/ROUND*100)+"%";
   $("qt").textContent=q[0];
   $("opts").innerHTML=items.map(o=>`<button class="opt" type="button" data-c="${o.c?1:0}">${esc(o.t)}</button>`).join("");
   $("tb").style.width="100%";
