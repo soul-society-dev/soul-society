@@ -112,6 +112,8 @@ main{animation:fadeUp .6s ease both}
 ::selection{background:rgba(232,182,92,.35)}
 @media (prefers-reduced-motion:reduce){main{animation:none}.soc,.ecard,.door,.fi,.btn{transition:none}.soc:hover,.ecard:hover,.door:hover,.btn:hover{transform:none}}
 /* WARM SEIREITEI THEME END */
+.spbig{font-family:"Cinzel Decorative","Shippori Mincho B1",Georgia,serif;font-weight:900;font-size:2.2rem;background:linear-gradient(180deg,#FFF7DE,#F0C97A 60%,#DDA845);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 12px}
+.spmore{display:inline-block;margin-top:14px;font-weight:700;color:#F0C97A;text-decoration:none;border-bottom:1px solid #F0C97A}
 </style>
 </head>
 <body>
@@ -174,6 +176,12 @@ main{animation:fadeUp .6s ease both}
         </section>
       </div>
       <div class="dside">
+        <section class="gc" style="--ac:#F0C97A">
+          <h2>Soul Points</h2>
+          <div class="spbig" id="spbal">…</div>
+          <ul id="spRec"><li>Loading…</li></ul>
+          <a class="spmore" href="points.html">See all rewards</a>
+        </section>
         <section class="gc" style="--ac:#7BD88F">
           <h2>Coming up</h2>
           <ul id="mEv"><li>Loading…</li></ul>
@@ -251,7 +259,7 @@ async function loadMember(){
   const soc=m.societies||[];
   $("soc").innerHTML=soc.length?soc.map(s=>`<a href="society.html?s=${slug(s)}" style="--c:${SOCC[s]||"#5AB7FF"}">${esc(s)}</a>`).join(""):'<span class="note">You haven\u2019t picked any societies yet.</span>';
   $("mem").hidden=false;
-  loadFeed(soc);
+  loadFeed(soc);loadSP();
 }
 $("again").onclick=async()=>{msg("Checking\u2026");try{await loadMember();msg("")}catch(e){msg("Could not check. Try again.")}};
 
@@ -314,6 +322,17 @@ $("dx").onclick=closeD;
 $("scrim").onclick=closeD;
 $("dout").onclick=()=>{closeD();signOut("Signed out.")};
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeD()});
+
+/* Soul Points card */
+async function loadSP(){
+  try{
+    const [rb,rl]=await Promise.all([api(SB+"/rest/v1/rpc/my_sp",{method:"POST",body:"{}"}),api(SB+"/rest/v1/sp_ledger?select=amount,reason,created_at&order=created_at.desc&limit=3")]);
+    const bal=await rb.json(),rows=await rl.json();
+    if(!rb.ok||typeof bal!=="number"){$("spbal").textContent="\u2013";$("spRec").innerHTML="<li>Soul Points aren\u2019t set up yet.</li>";return}
+    $("spbal").textContent=bal+" SP";
+    $("spRec").innerHTML=(Array.isArray(rows)&&rows.length)?rows.map(x=>`<li><b>${x.amount>0?"+":""}${esc(x.amount)} SP</b> \u2013 ${esc(x.reason)}</li>`).join(""):"<li>No Soul Points yet. Play a game to earn your first ones.</li>";
+  }catch(e){}
+}
 
 /* announcements and events from the admins */
 async function loadFeed(soc){

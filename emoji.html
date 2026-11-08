@@ -342,6 +342,15 @@ const getSes=()=>_ses||(_ses=(async()=>{
     return d.user&&d.user.id?{tok:d.access_token,uid:d.user.id}:null;
   }catch(e){return null}
 })());
+async function showSP(ses,game){
+  try{
+    const r=await fetch(SB+"/rest/v1/sp_ledger?select=amount,created_at&source=eq."+encodeURIComponent("game:"+game)+"&order=created_at.desc&limit=1",{headers:{apikey:KEY,Authorization:"Bearer "+ses.tok}});
+    const rows=await r.json();
+    if(!r.ok||!Array.isArray(rows))return;
+    const fresh=rows[0]&&Math.abs(Date.now()-new Date(rows[0].created_at).getTime())<120000;
+    $("ds").textContent="Score saved. "+(fresh?"You earned +"+rows[0].amount+" Soul Points.":"No Soul Points this time, because you\u2019ve reached today\u2019s limit for this game.");
+  }catch(e){}
+}
 async function saveScore(score){
   const ses=await getSes();
   if(!ses){$("ds").innerHTML='Sign in to save your score and join the leaderboard. <a href="member.html">Sign in</a>';return}
@@ -349,7 +358,7 @@ async function saveScore(score){
   try{
     const r=await fetch(SB+"/rest/v1/scores",{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({game:GAME,score:Math.min(200,Math.max(0,score))})});
     if(!r.ok)throw new Error(r.status);
-    $("ds").textContent="Score saved to the leaderboard.";loadBoard();
+    $("ds").textContent="Score saved to the leaderboard.";await showSP(ses,"emoji-challenge");loadBoard();
   }catch(e){$("ds").textContent="Your score wasn\u2019t saved. Scores are saved for approved members only."}
 }
 async function loadBoard(){

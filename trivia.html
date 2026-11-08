@@ -376,6 +376,15 @@ function answer(btn){
 $("opts").addEventListener("click",e=>{const b=e.target.closest(".opt");if(b)answer(b)});
 $("go").onclick=start;$("again").onclick=start;
 
+async function showSP(ses,game){
+  try{
+    const r=await fetch(SB+"/rest/v1/sp_ledger?select=amount,created_at&source=eq."+encodeURIComponent("game:"+game)+"&order=created_at.desc&limit=1",{headers:{apikey:KEY,Authorization:"Bearer "+ses.tok}});
+    const rows=await r.json();
+    if(!r.ok||!Array.isArray(rows))return;
+    const fresh=rows[0]&&Math.abs(Date.now()-new Date(rows[0].created_at).getTime())<120000;
+    $("ds").textContent="Score saved. "+(fresh?"You earned +"+rows[0].amount+" Soul Points.":"No Soul Points this time, because you\u2019ve reached today\u2019s limit for this game.");
+  }catch(e){}
+}
 async function finish(){
   show("done");
   $("dt").textContent=score>=130?"Legendary run!":score>=100?"Soul Reaper level":score>=60?"Solid effort":"Keep practising";
@@ -387,7 +396,7 @@ async function finish(){
   try{
     const r=await fetch(SB+"/rest/v1/scores",{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({game:"anime-trivia",score:score})});
     if(!r.ok)throw new Error(r.status);
-    $("ds").textContent="Score saved to the leaderboard.";
+    $("ds").textContent="Score saved to the leaderboard.";await showSP(ses,"anime-trivia");
     loadBoard();
   }catch(e){$("ds").textContent="Your score wasn\u2019t saved. Scores are saved for approved members only."}
 }

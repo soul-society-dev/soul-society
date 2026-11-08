@@ -61,6 +61,7 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
       <button class="vtab" data-v="mod" type="button" aria-pressed="false">Moderation</button>
       <button class="vtab" data-v="qs" type="button" aria-pressed="false">Questions</button>
       <button class="vtab" data-v="k" type="button" aria-pressed="false">Karaoke</button>
+      <button class="vtab" data-v="sp" type="button" aria-pressed="false">Soul Points</button>
       <button class="out" id="out" type="button">Sign out</button>
     </div>
     <div id="appsView">
@@ -84,6 +85,20 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
         <button class="gold" type="submit">Add session</button>
       </form>
       <div id="klist"></div>
+    </div>
+    <div id="spView" hidden>
+      <div class="m" id="smsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
+      <form class="c" id="sf">
+        <h2>Award or deduct Soul Points</h2>
+        <select id="sm" required aria-label="Member"></select>
+        <input id="sa" type="number" required min="-1000" max="1000" step="1" placeholder="Amount (use a minus sign to deduct)" aria-label="Amount">
+        <input id="sy" maxlength="120" placeholder="Reason (the member sees this)" aria-label="Reason">
+        <button class="gold" type="submit">Apply</button>
+      </form>
+      <h2 style="margin:20px 0 10px;font-family:Georgia,serif">Earning rules</h2>
+      <div id="srules"></div>
+      <h2 style="margin:20px 0 10px;font-family:Georgia,serif">Recent activity</h2>
+      <div id="slist"></div>
     </div>
     <div id="qsView" hidden>
       <div class="m" id="qmsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
@@ -243,12 +258,13 @@ function drawMembers(){
 $("views").addEventListener("click",e=>{
   const b=e.target.closest(".vtab");if(!b)return;
   const v=b.dataset.v;
-  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";$("modView").hidden=v!=="mod";$("qsView").hidden=v!=="qs";$("kView").hidden=v!=="k";
+  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";$("modView").hidden=v!=="mod";$("qsView").hidden=v!=="qs";$("spView").hidden=v!=="sp";$("kView").hidden=v!=="k";
   document.querySelectorAll(".vtab").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
   if(v==="mems")loadMembers();
   if(v==="cont")loadContent();
   if(v==="mod")loadMod();
   if(v==="qs")loadQs();
+  if(v==="sp")loadSPAdmin();
   if(v==="k")loadK();
 });
 
@@ -341,6 +357,48 @@ $("kView").addEventListener("click",async e=>{
     km("Done.");
     if(rs||rd)loadKQ((rs||rd).dataset.sid);else loadK();
   }catch(err){km("Could not complete that. Try again.");b.disabled=false}
+});
+
+/* Soul Points */
+const sm_=t=>{$("smsg").textContent=t};
+async function loadSPAdmin(){
+  try{
+    const [rm,rr,rl]=await Promise.all([api(SB+"/rest/v1/members?select=user_id,username,email&order=created_at.asc&limit=500"),api(SB+"/rest/v1/sp_rules?select=*&order=game.asc"),api(SB+"/rest/v1/sp_ledger?select=*&order=created_at.desc&limit=60")]);
+    if(rm.status===401||rr.status===401||rl.status===401){signOut("Your session expired. Sign in again.");return}
+    const ms=await rm.json(),rs=await rr.json(),ls=await rl.json();
+    if(!Array.isArray(rs)||!Array.isArray(ls)){sm_("Soul Points tables aren\u2019t set up yet. Run the Soul Points SQL first.");return}
+    const nm={};(Array.isArray(ms)?ms:[]).forEach(x=>nm[x.user_id]=x.username||x.email);
+    $("sm").innerHTML=(Array.isArray(ms)?ms:[]).map(x=>`<option value="${esc(x.user_id)}">${esc(x.username||x.email)}${x.username?" ("+esc(x.email)+")":""}</option>`).join("");
+    $("srules").innerHTML=rs.map(r=>`<div class="c"><h2>${esc(r.game)}</h2><div class="m">SP = base + score \u00f7 divisor, capped per round and per day. Posts and karaoke use the base only.</div>
+      <div class="m">Base</div><input data-f="base" data-g="${esc(r.game)}" type="number" min="0" max="100" value="${esc(r.base)}">
+      <div class="m">Score divisor</div><input data-f="score_div" data-g="${esc(r.game)}" type="number" min="1" max="10000" value="${esc(r.score_div)}">
+      <div class="m">Max per round</div><input data-f="max_round" data-g="${esc(r.game)}" type="number" min="0" max="500" value="${esc(r.max_round)}">
+      <div class="m">Max per day</div><input data-f="daily_cap" data-g="${esc(r.game)}" type="number" min="0" max="2000" value="${esc(r.daily_cap)}">
+      <div class="act"><button class="ok" data-rsave="${esc(r.game)}">Save rule</button></div></div>`).join("")||'<p class="m">No rules yet.</p>';
+    $("slist").innerHTML=ls.length?ls.map(x=>`<div class="c"><h2>${x.amount>0?"+":""}${esc(x.amount)} SP \u00b7 ${esc(nm[x.user_id]||"member")}</h2><div class="m">${esc(x.reason)} \u00b7 ${esc(x.source)} \u00b7 ${esc(new Date(x.created_at).toLocaleString())}</div></div>`).join(""):'<p class="m">No Soul Points activity yet.</p>';
+  }catch(err){sm_("Could not load. Check your connection.")}
+}
+$("sf").addEventListener("submit",async e=>{
+  e.preventDefault();const b=e.target.querySelector("button");b.disabled=true;sm_("Applying\u2026");
+  try{
+    const r=await api(SB+"/rest/v1/rpc/admin_award_sp",{method:"POST",body:JSON.stringify({target:$("sm").value,amt:parseInt($("sa").value,10),why:$("sy").value.trim()})});
+    if(r.status===401){signOut("Your session expired. Sign in again.");return}
+    if(!r.ok)throw new Error(r.status);
+    $("sa").value="";$("sy").value="";sm_("Done. The member can see it in their history.");loadSPAdmin();
+  }catch(err){sm_("Could not apply. Check the amount (1 to 1000, or negative to deduct).")}
+  b.disabled=false;
+});
+$("spView").addEventListener("click",async e=>{
+  const b=e.target.closest("button[data-rsave]");if(!b)return;
+  const g=b.dataset.rsave,body={};
+  document.querySelectorAll('#srules input[data-g="'+g+'"]').forEach(i=>body[i.dataset.f]=parseInt(i.value,10));
+  b.disabled=true;
+  try{
+    const r=await api(SB+"/rest/v1/sp_rules?game=eq."+encodeURIComponent(g),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify(body)});
+    if(!r.ok)throw new Error(r.status);
+    sm_("Rule saved.");
+  }catch(err){sm_("Could not save the rule. Check the numbers.")}
+  b.disabled=false;
 });
 
 /* trivia questions */

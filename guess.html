@@ -199,6 +199,7 @@ main{animation:fadeUp .6s ease both}
 ::selection{background:rgba(232,182,92,.35)}
 @media (prefers-reduced-motion:reduce){main{animation:none}.soc,.ecard,.door,.fi,.btn{transition:none}.soc:hover,.ecard:hover,.door:hover,.btn:hover{transform:none}}
 /* WARM SEIREITEI THEME END */
+.prog{height:6px;background:var(--line);border-radius:99px;margin-bottom:12px;overflow:hidden}.prog span{display:block;height:100%;width:0;background:var(--gold);transition:width .4s}
 </style>
 </head>
 <body data-page="games">
@@ -214,6 +215,7 @@ main{animation:fadeUp .6s ease both}
   </div>
   <div id="play" class="tbox" hidden>
     <div class="tmeta"><span id="qn"></span><span id="sc"></span></div>
+    <div class="prog"><span id="pg"></span></div>
     <ul class="clues" id="clues"></ul>
     <p class="pts" id="pts"></p>
     <div id="opts"></div>
@@ -360,7 +362,7 @@ function next(){
   const others=shuffle(C.filter((_,i)=>i!==order[qi]).map(x=>x[0])).slice(0,3);
   const opts=shuffle([cur[0],...others]);
   $("qn").textContent="Character "+(qi+1)+" of "+ROUND;
-  $("sc").textContent="Score: "+score;
+  $("sc").textContent="Score: "+score;$("pg").style.width=(qi/ROUND*100)+"%";
   $("opts").innerHTML=opts.map(n=>`<button class="opt" type="button" data-n="${esc(n)}">${esc(n)}</button>`).join("");
   $("fb").textContent="";
   drawClues();
@@ -378,6 +380,15 @@ $("opts").addEventListener("click",e=>{
 });
 $("go").onclick=start;$("again").onclick=start;
 
+async function showSP(ses,game){
+  try{
+    const r=await fetch(SB+"/rest/v1/sp_ledger?select=amount,created_at&source=eq."+encodeURIComponent("game:"+game)+"&order=created_at.desc&limit=1",{headers:{apikey:KEY,Authorization:"Bearer "+ses.tok}});
+    const rows=await r.json();
+    if(!r.ok||!Array.isArray(rows))return;
+    const fresh=rows[0]&&Math.abs(Date.now()-new Date(rows[0].created_at).getTime())<120000;
+    $("ds").textContent="Score saved. "+(fresh?"You earned +"+rows[0].amount+" Soul Points.":"No Soul Points this time, because you\u2019ve reached today\u2019s limit for this game.");
+  }catch(e){}
+}
 async function finish(){
   show("done");
   const max=ROUND*10;
@@ -390,7 +401,7 @@ async function finish(){
   try{
     const r=await fetch(SB+"/rest/v1/scores",{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({game:GAME,score:score})});
     if(!r.ok)throw new Error(r.status);
-    $("ds").textContent="Score saved to the leaderboard.";
+    $("ds").textContent="Score saved to the leaderboard.";await showSP(ses,"guess-character");
     loadBoard();
   }catch(e){$("ds").textContent="Your score wasn\u2019t saved. Scores are saved for approved members only."}
 }
