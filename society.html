@@ -6,12 +6,12 @@
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0C16'/%3E%3Ccircle cx='40' cy='24' r='12' fill='%23E9ECF5'/%3E%3Cpath d='M0 64V48l8-4 8 8 8-14 8 12 8-8 24 10v12z' fill='%23D9A441'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="icon.png">
-<meta name="theme-color" content="#0A0C16">
+<meta name="theme-color" content="#0B0B1E">
 <title>Society – Soul Society</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Shippori+Mincho+B1:wght@800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45;--c:#1E7FCB;
+:root{color-scheme:dark;--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45;--c:#1E7FCB;--cg:30,127,203;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45}}
 :root[data-theme="dark"]{--bg:#0A0C16;--ink:#E9ECF5;--card:#131728;--muted:#A0A7C4;--line:#262B45}
@@ -24,7 +24,7 @@ a{color:inherit}:focus-visible{outline:3px solid var(--c);outline-offset:3px}
 .top .wrap{display:flex;justify-content:space-between;align-items:center;padding-top:12px;padding-bottom:12px;gap:12px}
 .logo{font-family:"Cinzel Decorative",Georgia,serif;font-weight:900;font-size:1.05rem;text-decoration:none;letter-spacing:.08em}
 .top a.back{color:#A0A7C4;text-decoration:none;font-size:.92rem}
-.head{background:#0A0C16;color:#E9ECF5;border-bottom:6px solid var(--c);padding:40px 0 34px}
+.head{position:relative;overflow:hidden;background:radial-gradient(110% 150% at 88% 0%,rgba(var(--cg),.26),transparent 62%),#0A0C16;color:#E9ECF5;border-bottom:6px solid var(--c);padding:44px 0 38px}.head>.wrap{position:relative;z-index:2}.scene{position:absolute;inset:0;color:var(--c);pointer-events:none}.scene svg{display:block;width:100%;height:100%}
 .head h1{font-family:"Cinzel Decorative",Georgia,serif;font-weight:900;font-size:clamp(1.8rem,7vw,3.2rem);letter-spacing:.04em;margin-bottom:8px}
 .head p{color:#C9CFE3;margin:0 0 18px;max-width:34em}
 .btn{display:inline-block;font:inherit;font-weight:700;background:var(--c);color:#12152A;padding:12px 22px;text-decoration:none;border-radius:2px}
@@ -66,11 +66,46 @@ footer{padding:0 18px 36px;text-align:center;color:var(--muted);font-size:.85rem
 .hemb{width:72px;height:72px;color:var(--c);margin-bottom:10px}.hemb svg{width:100%;height:100%;display:block}
 .av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--c);color:#0A0C16;font-weight:800;font-size:.9rem;flex:none}.av.big{width:64px;height:64px;font-size:1.6rem}
 .th .by{display:flex;gap:8px;align-items:center}
+/* WARM SEIREITEI THEME START */
+:root:root:root{--bg:#0B0B1E;--ink:#F1EBFA;--card:rgba(26,21,52,.62);--muted:#ADA7CC;--line:rgba(185,166,255,.2);--blue:#B9A6FF;--gold:#E8B65C;--red:#FF7A8A;color-scheme:dark}
+body{background:radial-gradient(1000px 620px at 88% -6%,rgba(232,182,92,.14),transparent 62%),radial-gradient(900px 700px at -4% 34%,rgba(185,166,255,.12),transparent 60%),radial-gradient(800px 600px at 60% 100%,rgba(120,80,170,.14),transparent 60%),#0B0B1E;color:var(--ink)}
+.top{background:rgba(11,11,30,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(185,166,255,.16)}
+.top nav a:hover,.sn a:hover{color:#E8B65C}
+.logo{text-shadow:0 0 18px rgba(232,182,92,.35)}
+.hero,.phead{background:linear-gradient(#0B0B1E 0%,#1B1540 48%,#4B3472 80%,#8A5A6E 100%)}
+.hero::after,.phead::after{content:"";position:absolute;left:0;right:0;bottom:0;height:48%;background:radial-gradient(70% 100% at 50% 100%,rgba(240,201,122,.30),transparent 70%);pointer-events:none;z-index:1}
+.sky .moon{fill:#F8E6B8}
+.sky path:nth-of-type(1){fill:#261D52}.sky path:nth-of-type(2){fill:#110D2A}
+.spirit{background:#D8C9FF;box-shadow:0 0 12px 3px rgba(185,166,255,.65)}
+.hero h1{background:linear-gradient(180deg,#FFF7DE 10%,#F3D083 58%,#DDA845 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 18px rgba(232,182,92,.45))}
+.tag{color:#F0C97A}
+.btn{background:linear-gradient(135deg,#F6D98B,#DDA845);color:#2A1D05;border-radius:10px;box-shadow:0 8px 22px -8px rgba(232,182,92,.65);transition:transform .2s,box-shadow .2s}
+.btn:hover{filter:none;transform:translateY(-2px);box-shadow:0 12px 28px -8px rgba(232,182,92,.85)}
+.btn.ghost{background:transparent;color:#F1EBFA;border:2px solid rgba(185,166,255,.6);box-shadow:none}
+.soc,.ecard,.ev,.fi,.door,.step,.box,.gate,.battle,.th,.tbox,.lbrow,.req,.kf,.pill{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:16px}
+.soc,.ecard,.ev,.fi,.door,.step,.box,.gate,.battle,.th,.tbox,.lbrow,.req,.kf{background:var(--card);border-color:var(--line);box-shadow:0 10px 32px -14px rgba(0,0,0,.6)}
+.soc,.ecard,.door,.box,.battle,.tbox,.kf{border-top-width:3px}
+.soc,.ecard,.door,.fi{transition:transform .25s,box-shadow .25s,border-color .25s}
+.soc:hover,.ecard:hover,.door:hover,.fi:hover{box-shadow:0 16px 40px -12px var(--c,#B9A6FF);border-color:var(--c,#B9A6FF)}
+.soc:hover{transform:translateY(-4px)}
+.pill{background:rgba(26,21,52,.62)}
+.ev .d{color:#F0C97A}
+.spot,.cta,.joinbox{background:linear-gradient(160deg,rgba(40,31,78,.92),rgba(18,15,42,.92));border:1px solid rgba(185,166,255,.22);border-radius:20px}
+.head{background:radial-gradient(110% 150% at 88% 0%,rgba(var(--cg,185,166,255),.3),transparent 62%),linear-gradient(#0B0B1E,#19143C)}
+.opt{border-radius:12px}
+.gc{background:rgba(26,21,52,.62);border-color:rgba(185,166,255,.2)}
+.drawer{background:rgba(20,16,44,.94)}
+.card,.wait{background:rgba(26,21,52,.62);border-color:rgba(185,166,255,.2);border-radius:16px}
+main{animation:fadeUp .6s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+::selection{background:rgba(232,182,92,.35)}
+@media (prefers-reduced-motion:reduce){main{animation:none}.soc,.ecard,.door,.fi,.btn{transition:none}.soc:hover,.ecard:hover,.door:hover,.btn:hover{transform:none}}
+/* WARM SEIREITEI THEME END */
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap"><a class="logo" href="index.html">Soul Society</a><span><a class="back" href="societies.html">All societies</a> &nbsp; <a class="back" id="lg" href="member.html">Log in</a></span></div></header>
-<div class="head"><div class="wrap"><div class="hemb" id="hemb"></div><h1 id="nm">Society</h1><p id="tg"></p><a class="btn" id="jn" href="join.html">Join this society</a></div></div>
+<div class="head"><div class="scene" id="scene" aria-hidden="true"></div><div class="wrap"><div class="hemb" id="hemb"></div><h1 id="nm">Society</h1><p id="tg"></p><a class="btn" id="jn" href="join.html">Join this society</a></div></div>
 <main class="wrap" id="main"></main>
 <footer>Soul Society is an independent fan community. It is not affiliated with or endorsed by any studio, publisher or rights holder.</footer>
 
@@ -147,6 +182,7 @@ if(!s){
   document.documentElement.style.setProperty("--c",s[1]);
   document.getElementById("nm").textContent=s[0];
   document.getElementById("hemb").innerHTML=EMB[id]||"";
+  renderScene(id,s[1]);
   document.getElementById("tg").textContent=s[2];
   if(s[9])document.getElementById("jn").textContent="Join Soul Society";
   if(id==="hentai-paradise"){
@@ -199,6 +235,43 @@ const getSes=()=>_ses||(_ses=(async()=>{
 const rest=(path,ses,opt)=>fetch(SB+"/rest/v1/"+path,{...(opt||{}),headers:{apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json",...((opt&&opt.headers)||{})}});
 const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
+function renderScene(id,hex){
+  const n=parseInt(hex.slice(1),16);
+  document.documentElement.style.setProperty("--cg",[(n>>16)&255,(n>>8)&255,n&255].join(","));
+  let seed=7;for(const ch of id)seed=(seed*31+ch.charCodeAt(0))%2147483647||7;
+  const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const star=(x,y,r,o)=>`<path d="M${x} ${y-r}Q${x} ${y} ${x+r} ${y}Q${x} ${y} ${x} ${y+r}Q${x} ${y} ${x-r} ${y}Q${x} ${y} ${x} ${y-r}Z" fill="currentColor" opacity="${o}"/>`;
+  const kind={"anime-hub":"rays","gamers-society":"pixels","games-arena":"pixels","cinerealm":"film","novelup-book-club":"books","ss-battle-ground":"slash","music-society":"wave","karaoke-lounge":"wave","mmm-society":"panels","hentai-paradise":"rings"}[id]||"rays";
+  let g="";
+  if(kind==="rays"){
+    for(let i=0;i<16;i++){const a1=i/16*Math.PI*1.1,a2=a1+Math.PI/48,L=900;
+      g+=`<path d="M1000 10L${(1000+Math.cos(a1)*L).toFixed(0)} ${(10+Math.sin(a1)*L).toFixed(0)}L${(1000+Math.cos(a2)*L).toFixed(0)} ${(10+Math.sin(a2)*L).toFixed(0)}Z" fill="currentColor" opacity=".10"/>`}
+    for(let i=0;i<9;i++)g+=star((620+rnd()*540).toFixed(0),(20+rnd()*250).toFixed(0),(6+rnd()*12).toFixed(0),(.35+rnd()*.3).toFixed(2));
+  }else if(kind==="pixels"){
+    for(let i=0;i<90;i++){const x=Math.floor((560+rnd()*620)/28)*28,y=Math.floor(rnd()*10)*28;
+      g+=`<rect x="${x}" y="${y}" width="24" height="24" rx="3" fill="currentColor" opacity="${(.06+rnd()*.2).toFixed(2)}"/>`}
+  }else if(kind==="film"){
+    g+=`<path d="M980 0L740 300H1200V0Z" fill="currentColor" opacity=".07"/><rect x="500" y="0" width="700" height="42" fill="currentColor" opacity=".08"/><rect x="500" y="258" width="700" height="42" fill="currentColor" opacity=".08"/>`;
+    for(let x=520;x<1200;x+=44)g+=`<rect x="${x}" y="14" width="22" height="14" rx="3" fill="currentColor" opacity=".25"/><rect x="${x}" y="272" width="22" height="14" rx="3" fill="currentColor" opacity=".25"/>`;
+  }else if(kind==="books"){
+    for(let x=560;x<1190;x+=30){const w=20+rnd()*14,h=90+rnd()*130;
+      g+=`<rect x="${x}" y="${(300-h).toFixed(0)}" width="${w.toFixed(0)}" height="${h.toFixed(0)}" rx="2" fill="currentColor" opacity="${(.14+rnd()*.2).toFixed(2)}"/><rect x="${x}" y="${(312-h).toFixed(0)}" width="${w.toFixed(0)}" height="4" fill="currentColor" opacity=".35"/>`}
+  }else if(kind==="slash"){
+    for(let i=0;i<7;i++){const x=640+i*90+rnd()*30;
+      g+=`<path d="M${x.toFixed(0)} 300L${(x+170).toFixed(0)} 0H${(x+190).toFixed(0)}L${(x+20).toFixed(0)} 300Z" fill="currentColor" opacity="${(.08+rnd()*.14).toFixed(2)}"/>`}
+    for(let i=0;i<10;i++)g+=`<circle cx="${(600+rnd()*580).toFixed(0)}" cy="${(rnd()*280).toFixed(0)}" r="${(2+rnd()*3).toFixed(1)}" fill="currentColor" opacity=".45"/>`;
+  }else if(kind==="wave"){
+    for(let i=0;i<44;i++){const h=20+(Math.sin(i*.55)+1)*50+rnd()*40;
+      g+=`<rect x="${520+i*15}" y="${(300-h).toFixed(0)}" width="9" height="${h.toFixed(0)}" rx="4" fill="currentColor" opacity="${(.18+rnd()*.2).toFixed(2)}"/>`}
+  }else if(kind==="panels"){
+    g+=`<g fill="none" stroke="currentColor" stroke-width="3" opacity=".28"><rect x="640" y="30" width="250" height="150"/><rect x="910" y="30" width="230" height="110"/><rect x="910" y="160" width="230" height="110"/><rect x="640" y="200" width="250" height="70"/></g>`;
+    for(let x=650;x<890;x+=14)for(let y=40;y<180;y+=14)g+=`<circle cx="${x}" cy="${y}" r="2.2" fill="currentColor" opacity=".13"/>`;
+  }else{
+    for(const r of [60,110,160,210])g+=`<circle cx="1000" cy="150" r="${r}" fill="none" stroke="currentColor" stroke-width="2" opacity=".16"/>`;
+  }
+  const el=document.getElementById("scene");
+  if(el)el.innerHTML=`<svg viewBox="0 0 1200 300" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">${g}</svg>`;
+}
 const AVC=["#5AB7FF","#7BD88F","#D9A441","#B58CFF","#FF7A59","#FF6FAE","#4DD0C4","#9AA7FF"];
 const av=(n,big)=>{n=String(n||"?");let h=0;for(const c of n)h=(h*31+c.codePointAt(0))>>>0;const m=n.match(/[A-Za-z0-9]/);return `<span class="av${big?" big":""}" style="--c:${AVC[h%AVC.length]}" aria-hidden="true">${m?m[0].toUpperCase():"?"}</span>`};
 (async()=>{

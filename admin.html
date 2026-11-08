@@ -60,6 +60,7 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
       <button class="vtab" data-v="cont" type="button" aria-pressed="false">Content</button>
       <button class="vtab" data-v="mod" type="button" aria-pressed="false">Moderation</button>
       <button class="vtab" data-v="qs" type="button" aria-pressed="false">Questions</button>
+      <button class="vtab" data-v="k" type="button" aria-pressed="false">Karaoke</button>
       <button class="out" id="out" type="button">Sign out</button>
     </div>
     <div id="appsView">
@@ -72,6 +73,18 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
     <div id="list" aria-live="polite"></div>
     </div>
     <div id="memsView" hidden><div id="mlist" aria-live="polite"></div></div>
+    <div id="kView" hidden>
+      <div class="m" id="kmsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
+      <form class="c" id="kf">
+        <h2>New karaoke session</h2>
+        <input id="kt" required maxlength="80" placeholder="Title (for example: Anime openings night)" aria-label="Title">
+        <input id="kh" maxlength="120" placeholder="Theme (optional)" aria-label="Theme">
+        <input id="kd" type="datetime-local" required aria-label="Date and time">
+        <input id="kl" type="url" maxlength="300" placeholder="Voice room link (optional, starts with https://)" aria-label="Voice room link">
+        <button class="gold" type="submit">Add session</button>
+      </form>
+      <div id="klist"></div>
+    </div>
     <div id="qsView" hidden>
       <div class="m" id="qmsg" role="status" style="color:#D9A441;font-weight:700;min-height:1.4em"></div>
       <form class="c" id="qf">
@@ -230,12 +243,13 @@ function drawMembers(){
 $("views").addEventListener("click",e=>{
   const b=e.target.closest(".vtab");if(!b)return;
   const v=b.dataset.v;
-  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";$("modView").hidden=v!=="mod";$("qsView").hidden=v!=="qs";
+  $("appsView").hidden=v!=="apps";$("memsView").hidden=v!=="mems";$("contView").hidden=v!=="cont";$("modView").hidden=v!=="mod";$("qsView").hidden=v!=="qs";$("kView").hidden=v!=="k";
   document.querySelectorAll(".vtab").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
   if(v==="mems")loadMembers();
   if(v==="cont")loadContent();
   if(v==="mod")loadMod();
   if(v==="qs")loadQs();
+  if(v==="k")loadK();
 });
 
 /* announcements and events */
@@ -274,6 +288,59 @@ $("contView").addEventListener("click",async e=>{
     if(!r.ok)throw new Error(r.status);
     cm("Deleted.");loadContent();
   }catch(err){cm("Could not delete. Try again.");b.disabled=false}
+});
+
+/* karaoke */
+const km=t=>{$("kmsg").textContent=t};
+const kwhen=i=>new Date(i).toLocaleString(undefined,{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
+async function loadK(){
+  try{
+    const r=await api(SB+"/rest/v1/karaoke_sessions?select=*&order=starts_at.desc&limit=30");
+    if(r.status===401){signOut("Your session expired. Sign in again.");return}
+    const rows=await r.json();
+    $("klist").innerHTML=(Array.isArray(rows)&&rows.length)?rows.map(x=>`<div class="c"><h2>${esc(x.title)}<span class="st">${esc(x.status)}</span></h2><div class="m">${esc(kwhen(x.starts_at))}${x.theme?" · "+esc(x.theme):""}</div>${x.room_link?`<div class="m">Room: ${esc(x.room_link)}</div>`:""}
+      <div class="act"><button class="ok" data-ks="${esc(x.id)}" data-s="live">Set live</button><button class="undo" data-ks="${esc(x.id)}" data-s="upcoming">Upcoming</button><button class="undo" data-ks="${esc(x.id)}" data-s="done">Mark done</button></div>
+      <div class="act"><button class="undo" data-kq="${esc(x.id)}">Song queue</button><button class="no" data-kdel="${esc(x.id)}">Delete</button></div>
+      <div id="kq-${esc(x.id)}"></div></div>`).join(""):'<p class="m">No sessions yet.</p>';
+  }catch(err){km("Could not load sessions. Check your connection.")}
+}
+async function loadKQ(id){
+  const box=document.getElementById("kq-"+id);if(!box)return;
+  try{
+    const r=await api(SB+"/rest/v1/song_requests?select=*&session_id=eq."+encodeURIComponent(id)+"&order=created_at.asc");
+    const rows=await r.json();
+    box.innerHTML=(Array.isArray(rows)&&rows.length)?rows.map(x=>`<div class="note"><b>${esc(x.song)}</b>${x.artist?" – "+esc(x.artist):""}<div class="m">${esc(x.requester)} · ${esc(x.status)}</div><div class="act"><button class="ok" data-rs="${esc(x.id)}" data-s="performing" data-sid="${esc(id)}">Singing</button><button class="undo" data-rs="${esc(x.id)}" data-s="done" data-sid="${esc(id)}">Done</button><button class="undo" data-rs="${esc(x.id)}" data-s="skipped" data-sid="${esc(id)}">Skip</button><button class="no" data-rdel="${esc(x.id)}" data-sid="${esc(id)}">Remove</button></div></div>`).join(""):'<p class="m">No requests yet.</p>';
+  }catch(err){box.innerHTML='<p class="m">Could not load the queue.</p>'}
+}
+$("kf").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const link=$("kl").value.trim();
+  if(link&&!/^https?:\/\//i.test(link)){km("The voice room link must start with https://");return}
+  const b=e.target.querySelector("button");b.disabled=true;km("Adding…");
+  try{
+    const r=await api(SB+"/rest/v1/karaoke_sessions",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({title:$("kt").value.trim(),theme:$("kh").value.trim()||null,starts_at:new Date($("kd").value).toISOString(),room_link:link||null})});
+    if(r.status===401){signOut("Your session expired. Sign in again.");return}
+    if(!r.ok)throw new Error(r.status);
+    e.target.reset();km("Session added.");loadK();
+  }catch(err){km("Could not add the session. Check every box.")}
+  b.disabled=false;
+});
+$("kView").addEventListener("click",async e=>{
+  const s=e.target.closest("button[data-ks]"),q=e.target.closest("button[data-kq]"),d=e.target.closest("button[data-kdel]"),rs=e.target.closest("button[data-rs]"),rd=e.target.closest("button[data-rdel]");
+  const b=s||q||d||rs||rd;if(!b)return;
+  try{
+    if(q){loadKQ(q.dataset.kq);return}
+    if((d||rd)&&!confirm("Delete this? This cannot be undone."))return;
+    b.disabled=true;
+    let r;
+    if(s)r=await api(SB+"/rest/v1/karaoke_sessions?id=eq."+encodeURIComponent(s.dataset.ks),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({status:s.dataset.s})});
+    else if(d)r=await api(SB+"/rest/v1/karaoke_sessions?id=eq."+encodeURIComponent(d.dataset.kdel),{method:"DELETE"});
+    else if(rs)r=await api(SB+"/rest/v1/song_requests?id=eq."+encodeURIComponent(rs.dataset.rs),{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({status:rs.dataset.s})});
+    else r=await api(SB+"/rest/v1/song_requests?id=eq."+encodeURIComponent(rd.dataset.rdel),{method:"DELETE"});
+    if(!r.ok)throw new Error(r.status);
+    km("Done.");
+    if(rs||rd)loadKQ((rs||rd).dataset.sid);else loadK();
+  }catch(err){km("Could not complete that. Try again.");b.disabled=false}
 });
 
 /* trivia questions */

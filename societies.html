@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0C16'/%3E%3Ccircle cx='40' cy='24' r='12' fill='%23E9ECF5'/%3E%3Cpath d='M0 64V48l8-4 8 8 8-14 8 12 8-8 24 10v12z' fill='%23D9A441'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="icon.png">
-<meta name="theme-color" content="#0A0C16">
+<meta name="theme-color" content="#0B0B1E">
 <title>Societies – Soul Society</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Shippori+Mincho+B1:wght@700;800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
@@ -148,6 +148,41 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
 
 .emb{display:block;width:52px;height:52px;color:var(--c);margin-bottom:8px}.emb svg{width:100%;height:100%;display:block}
 .phead .moon{opacity:.28;animation:none}
+/* WARM SEIREITEI THEME START */
+:root:root:root{--bg:#0B0B1E;--ink:#F1EBFA;--card:rgba(26,21,52,.62);--muted:#ADA7CC;--line:rgba(185,166,255,.2);--blue:#B9A6FF;--gold:#E8B65C;--red:#FF7A8A;color-scheme:dark}
+body{background:radial-gradient(1000px 620px at 88% -6%,rgba(232,182,92,.14),transparent 62%),radial-gradient(900px 700px at -4% 34%,rgba(185,166,255,.12),transparent 60%),radial-gradient(800px 600px at 60% 100%,rgba(120,80,170,.14),transparent 60%),#0B0B1E;color:var(--ink)}
+.top{background:rgba(11,11,30,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(185,166,255,.16)}
+.top nav a:hover,.sn a:hover{color:#E8B65C}
+.logo{text-shadow:0 0 18px rgba(232,182,92,.35)}
+.hero,.phead{background:linear-gradient(#0B0B1E 0%,#1B1540 48%,#4B3472 80%,#8A5A6E 100%)}
+.hero::after,.phead::after{content:"";position:absolute;left:0;right:0;bottom:0;height:48%;background:radial-gradient(70% 100% at 50% 100%,rgba(240,201,122,.30),transparent 70%);pointer-events:none;z-index:1}
+.sky .moon{fill:#F8E6B8}
+.sky path:nth-of-type(1){fill:#261D52}.sky path:nth-of-type(2){fill:#110D2A}
+.spirit{background:#D8C9FF;box-shadow:0 0 12px 3px rgba(185,166,255,.65)}
+.hero h1{background:linear-gradient(180deg,#FFF7DE 10%,#F3D083 58%,#DDA845 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 18px rgba(232,182,92,.45))}
+.tag{color:#F0C97A}
+.btn{background:linear-gradient(135deg,#F6D98B,#DDA845);color:#2A1D05;border-radius:10px;box-shadow:0 8px 22px -8px rgba(232,182,92,.65);transition:transform .2s,box-shadow .2s}
+.btn:hover{filter:none;transform:translateY(-2px);box-shadow:0 12px 28px -8px rgba(232,182,92,.85)}
+.btn.ghost{background:transparent;color:#F1EBFA;border:2px solid rgba(185,166,255,.6);box-shadow:none}
+.soc,.ecard,.ev,.fi,.door,.step,.box,.gate,.battle,.th,.tbox,.lbrow,.req,.kf,.pill{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:16px}
+.soc,.ecard,.ev,.fi,.door,.step,.box,.gate,.battle,.th,.tbox,.lbrow,.req,.kf{background:var(--card);border-color:var(--line);box-shadow:0 10px 32px -14px rgba(0,0,0,.6)}
+.soc,.ecard,.door,.box,.battle,.tbox,.kf{border-top-width:3px}
+.soc,.ecard,.door,.fi{transition:transform .25s,box-shadow .25s,border-color .25s}
+.soc:hover,.ecard:hover,.door:hover,.fi:hover{box-shadow:0 16px 40px -12px var(--c,#B9A6FF);border-color:var(--c,#B9A6FF)}
+.soc:hover{transform:translateY(-4px)}
+.pill{background:rgba(26,21,52,.62)}
+.ev .d{color:#F0C97A}
+.spot,.cta,.joinbox{background:linear-gradient(160deg,rgba(40,31,78,.92),rgba(18,15,42,.92));border:1px solid rgba(185,166,255,.22);border-radius:20px}
+.head{background:radial-gradient(110% 150% at 88% 0%,rgba(var(--cg,185,166,255),.3),transparent 62%),linear-gradient(#0B0B1E,#19143C)}
+.opt{border-radius:12px}
+.gc{background:rgba(26,21,52,.62);border-color:rgba(185,166,255,.2)}
+.drawer{background:rgba(20,16,44,.94)}
+.card,.wait{background:rgba(26,21,52,.62);border-color:rgba(185,166,255,.2);border-radius:16px}
+main{animation:fadeUp .6s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+::selection{background:rgba(232,182,92,.35)}
+@media (prefers-reduced-motion:reduce){main{animation:none}.soc,.ecard,.door,.fi,.btn{transition:none}.soc:hover,.ecard:hover,.door:hover,.btn:hover{transform:none}}
+/* WARM SEIREITEI THEME END */
 </style>
 </head>
 <body data-page="societies">
