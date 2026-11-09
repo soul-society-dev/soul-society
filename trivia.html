@@ -396,7 +396,7 @@ async function finish(){
   try{
     const r=await fetch(SB+"/rest/v1/scores",{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({game:"anime-trivia",score:score})});
     if(!r.ok)throw new Error(r.status);
-    $("ds").textContent="Score saved to the leaderboard.";await showSP(ses,"anime-trivia");
+    $("ds").textContent="Score saved to the leaderboard.";await showSP(ses,"anime-trivia");window.dispatchEvent(new Event("ss-refresh"));
     loadBoard();
   }catch(e){$("ds").textContent="Your score wasn\u2019t saved. Scores are saved for approved members only."}
 }
@@ -425,6 +425,106 @@ async function loadBoard(){
 })();
 })();
 
+</script>
+<script>
+/* SS BELL */
+(function(){
+if(window.__ssBell)return;window.__ssBell=1;
+const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP",SK="ss-member";
+const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ICON={sp:"\u2728",badge:"\u{1F3C5}",event:"\u{1F4C5}",announcement:"\u{1F4E3}",update:"\u{1F514}",result:"\u{1F3C6}"};
+const ago=d=>{const s=(Date.now()-new Date(d).getTime())/1000;if(s<60)return"just now";if(s<3600)return Math.floor(s/60)+" min ago";if(s<86400)return Math.floor(s/3600)+" h ago";return new Date(d).toLocaleDateString()};
+const safeLink=l=>(l&&/^[A-Za-z0-9_.\-]+(\?[A-Za-z0-9_=&.\-]*)?(#[A-Za-z0-9_\-]*)?$/.test(l))?l:null;
+let ses=null,rows=[],btn,cnt,panel,list;
+async function getSes(){
+  try{
+    let bucket=localStorage,raw=localStorage.getItem(SK);
+    if(!raw){bucket=sessionStorage;raw=sessionStorage.getItem(SK)}
+    if(!raw)return null;
+    const rt=JSON.parse(raw).rt;if(!rt)return null;
+    const r=await fetch(SB+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:rt})});
+    if(!r.ok)return null;
+    const d=await r.json();
+    try{bucket.setItem(SK,JSON.stringify({rt:d.refresh_token}))}catch(e){}
+    return d.user&&d.user.id?{tok:d.access_token,uid:d.user.id}:null;
+  }catch(e){return null}
+}
+const H=()=>({apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json"});
+async function load(){
+  try{
+    const r=await fetch(SB+"/rest/v1/notifications?select=id,kind,title,body,link,read,created_at&order=created_at.desc&limit=30",{headers:H()});
+    const d=await r.json();
+    if(Array.isArray(d)){rows=d;draw()}
+  }catch(e){}
+}
+function draw(){
+  const u=rows.filter(x=>!x.read).length;
+  cnt.textContent=u>9?"9+":String(u);cnt.hidden=u===0;
+  btn.setAttribute("aria-label","Notifications"+(u?", "+u+" unread":""));
+  list.innerHTML=rows.length?rows.map(x=>`<button type="button" class="bn-i${x.read?"":" un"}" data-id="${esc(x.id)}" data-l="${esc(safeLink(x.link)||"")}"><span class="bn-ic" aria-hidden="true">${ICON[x.kind]||"\u{1F514}"}</span><span class="bn-t"><b>${esc(x.title)}</b>${x.body?`<span>${esc(x.body)}</span>`:""}<em>${esc(ago(x.created_at))}</em></span></button>`).join(""):'<p class="bn-e">No notifications yet.</p>';
+}
+async function markRead(id){
+  const row=rows.find(x=>x.id===id);if(row)row.read=true;draw();
+  try{await fetch(SB+"/rest/v1/notifications?id=eq."+encodeURIComponent(id),{method:"PATCH",headers:{...H(),Prefer:"return=minimal"},body:JSON.stringify({read:true})})}catch(e){}
+}
+async function markAll(){
+  rows.forEach(x=>x.read=true);draw();
+  try{await fetch(SB+"/rest/v1/notifications?read=eq.false",{method:"PATCH",headers:{...H(),Prefer:"return=minimal"},body:JSON.stringify({read:true})})}catch(e){}
+}
+function toggle(force){
+  const open=force!==undefined?force:panel.hidden;
+  panel.hidden=!open;btn.setAttribute("aria-expanded",String(open));
+  if(open)load();
+}
+function build(){
+  const st=document.createElement("style");
+  st.textContent=`.bellw{position:relative;display:inline-flex;margin-left:12px;order:9}
+.bell{position:relative;width:40px;height:40px;border-radius:50%;border:1px solid rgba(185,166,255,.35);background:rgba(255,255,255,.05);color:#F1EBFA;cursor:pointer;display:grid;place-items:center;padding:0;transition:border-color .2s,box-shadow .2s}
+.bell:hover,.bell[aria-expanded="true"]{border-color:#E8B65C;box-shadow:0 0 14px rgba(232,182,92,.4)}
+.bell svg{width:20px;height:20px}
+.bc{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#E8B65C;color:#2A1D05;font:700 .72rem/18px system-ui,sans-serif;text-align:center}
+.bc[hidden]{display:none}
+.bpanel{position:fixed;top:64px;right:12px;width:min(380px,94vw);max-height:72vh;overflow:auto;z-index:1000;background:rgba(20,16,44,.97);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(185,166,255,.28);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.bpanel[hidden]{display:none}
+.bn-h{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(185,166,255,.2);color:#F1EBFA;font-weight:700}
+.bn-h button{background:none;border:0;color:#E8B65C;font:inherit;font-size:.88rem;cursor:pointer;padding:0}
+.bn-i{display:flex;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid rgba(185,166,255,.12);padding:12px 16px;color:#F1EBFA;cursor:pointer;font:inherit}
+.bn-i:hover{background:rgba(255,255,255,.05)}.bn-i.un{background:rgba(232,182,92,.08)}
+.bn-i.un .bn-t b::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#E8B65C;margin-right:8px}
+.bn-ic{font-size:1.3rem;line-height:1.3}.bn-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.bn-t b{font-weight:700}.bn-t span{color:#ADA7CC;font-size:.88rem;word-break:break-word}.bn-t em{color:#8F89B3;font-size:.78rem;font-style:normal}
+.bn-e{padding:22px 16px;margin:0;color:#ADA7CC;text-align:center}
+@media (max-width:760px){.bellw{order:0;margin-left:auto}.bpanel{top:60px}}`;
+  document.head.appendChild(st);
+  const hdr=document.querySelector(".top");if(!hdr)return false;
+  const target=hdr.querySelector(".hr")||hdr.querySelector(".wrap")||hdr.querySelector(".in")||hdr;
+  const w=document.createElement("div");w.className="bellw";
+  w.innerHTML='<button class="bell" type="button" aria-label="Notifications" aria-expanded="false" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="bc" hidden>0</span></button><div class="bpanel" hidden role="dialog" aria-label="Notifications"><div class="bn-h"><span>Notifications</span><button type="button" class="bn-all">Mark all read</button></div><div class="bn-l"></div></div>';
+  const menu=target.querySelector("#menuBtn");
+  if(menu)target.insertBefore(w,menu);
+  else if(target.classList.contains("hr"))target.insertBefore(w,target.firstChild);
+  else target.appendChild(w);
+  btn=w.querySelector(".bell");cnt=w.querySelector(".bc");panel=w.querySelector(".bpanel");list=w.querySelector(".bn-l");
+  btn.addEventListener("click",e=>{e.stopPropagation();toggle()});
+  w.querySelector(".bn-all").addEventListener("click",markAll);
+  list.addEventListener("click",e=>{
+    const b=e.target.closest(".bn-i");if(!b)return;
+    markRead(b.dataset.id);
+    if(b.dataset.l)setTimeout(()=>{location.href=b.dataset.l},120);
+  });
+  document.addEventListener("click",e=>{if(!panel.hidden&&!w.contains(e.target))toggle(false)});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden)toggle(false)});
+  return true;
+}
+async function init(){
+  await new Promise(r=>setTimeout(r,1200));
+  ses=await getSes();if(!ses)return;
+  if(!build())return;
+  load();setInterval(()=>{if(document.visibilityState==="visible")load()},45000);
+  window.addEventListener("ss-refresh",()=>setTimeout(load,1500));
+}
+init();
+})();
 </script>
 </body>
 </html>
