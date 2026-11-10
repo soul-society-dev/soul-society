@@ -39,6 +39,7 @@ select,textarea{width:100%;padding:12px;margin-bottom:10px;background:#131728;co
 #msg{color:#D9A441;min-height:1.4em;margin-top:8px}
 .chk{display:flex;gap:10px;align-items:center;margin:2px 0 14px;color:#A0A7C4}.chk input{width:auto;margin:0}
 .codebig{font-family:ui-monospace,Menlo,monospace;font-size:1.5rem;letter-spacing:.14em;color:#F0C97A;margin:2px 0 12px}
+.wa.mail{background:#B9A6FF;color:#1a1238;margin-left:6px}
 .wa{display:inline-block;padding:10px 16px;font-weight:700;border-radius:2px;background:#25D366;color:#06210f;text-decoration:none}
 </style>
 </head>
@@ -227,6 +228,15 @@ async function load(){
   }catch(err){$("list").innerHTML='<p class="m">Could not load applications. Check your connection.</p>'}
 }
 
+function waNumber(p){
+  if(!p)return "";
+  const raw=String(p).trim(),d=raw.replace(/\D/g,"");
+  if(!d)return "";
+  if(raw.startsWith("+"))return d;
+  if(d.startsWith("00"))return d.slice(2);
+  if(d.startsWith("0"))return "234"+d.slice(1);
+  return d;
+}
 const fmtCode=c=>c?c.slice(0,5)+"-"+c.slice(5):"";
 const memberLink=()=>location.origin+location.pathname.replace(/[^/]*$/,"")+"member.html";
 function codeInfo(x){
@@ -237,8 +247,10 @@ function codeInfo(x){
 }
 function codeUI(x){
   if(x.code_used_at)return '';
-  const wa="https://wa.me/?text="+encodeURIComponent("Hi "+x.full_name+", your Soul Society application is approved! Create your account here: "+memberLink()+" (tap Create account, use the email you applied with, and enter this approval code): "+fmtCode(x.code)+"\nThe code works once and expires in 14 days.");
-  return (x.code?'<button class="ok" data-copy="'+esc(x.code)+'">Copy code</button><a class="wa" href="'+esc(wa)+'" target="_blank" rel="noopener">Send on WhatsApp</a>':'')+'<button class="undo" data-newcode="'+esc(x.id)+'">New code</button>';
+  const msgText="Hi "+x.full_name+", your Soul Society application is approved! Create your account here: "+memberLink()+" (tap Create account, use the email you applied with, and enter this approval code): "+fmtCode(x.code)+"\nThe code works once and expires in 14 days.";
+  const wa="https://wa.me/"+waNumber(x.phone)+"?text="+encodeURIComponent(msgText);
+  const mail="mailto:"+encodeURIComponent(x.email)+"?subject="+encodeURIComponent("Your Soul Society approval code")+"&body="+encodeURIComponent(msgText);
+  return (x.code?'<button class="ok" data-copy="'+esc(x.code)+'">Copy code</button><a class="wa" href="'+esc(wa)+'" target="_blank" rel="noopener">Send on WhatsApp</a><a class="wa mail" href="'+esc(mail)+'">Send by email</a>':'')+'<button class="undo" data-newcode="'+esc(x.id)+'">New code</button>';
 }
 function draw(){
   document.querySelectorAll(".tab").forEach(b=>{
@@ -255,6 +267,7 @@ function draw(){
       :`${codeUI(x)}<button class="undo" data-id="${esc(x.id)}" data-s="pending">Move back to pending</button>`;
     return `<div class="c"><h2>${esc(x.full_name)}<span class="st ${esc(x.status)}">${esc(x.status)}</span></h2>
       <div class="m">${esc(x.email)}</div>
+      ${x.phone?`<div class="m">WhatsApp: ${esc(x.phone)}</div>`:""}
       <div class="m">Societies: ${esc(soc)}</div>
       <div class="m">18 or older: ${x.is_adult?"Yes":"No"} · Applied ${esc(new Date(x.created_at).toLocaleDateString())}</div>
       ${flag}${x.note?`<div class="note">${esc(x.note)}</div>`:""}
