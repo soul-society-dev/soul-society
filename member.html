@@ -116,7 +116,9 @@ main{animation:fadeUp .6s ease both}
 .spmore{display:inline-block;margin-top:14px;font-weight:700;color:#F0C97A;text-decoration:none;border-bottom:1px solid #F0C97A}
 .bchips{display:flex;flex-wrap:wrap;gap:8px}.bchip{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);filter:grayscale(1);opacity:.45;font-size:1.2rem}
 .bchip.on{filter:none;opacity:1;border-color:#F0C97A;box-shadow:0 0 14px -2px rgba(240,201,122,.6)}
+.dl2{background:transparent;color:#F0C97A;border:1px solid #F0C97A;margin-top:8px}
 </style>
+<script src="chibi.js"></script>
 </head>
 <body>
 <header class="top"><div class="in"><a class="logo" href="index.html">Soul Society</a><div class="hr"><button class="pbtn" id="pbtn" hidden type="button" aria-label="Open profile menu" aria-expanded="false" aria-controls="drawer"><span id="pav"></span></button><button class="ghost" id="out" hidden type="button">Sign out</button></div></div>
@@ -128,6 +130,7 @@ main{animation:fadeUp .6s ease both}
   <b class="dn" id="dn"></b>
   <span class="de" id="de"></span>
   <a class="dl" href="profile.html">View and edit your profile</a>
+  <a class="dl dl2" href="avatar.html">Customize your avatar</a>
   <button class="ghost" id="dout" type="button">Sign out</button>
 </aside>
 <main class="wrap">
@@ -262,7 +265,7 @@ async function loadMember(){
   }
   const name=m.username||(m.email||mail).split("@")[0];
   $("hi").textContent="Welcome, "+name;$("hisub").textContent="Member of Soul Society";
-  $("pav").innerHTML=av(name);$("dav").innerHTML=av(name,true);$("dn").textContent=name;$("de").textContent=mail||"";$("pbtn").hidden=false;
+  $("pav").innerHTML=ava(m,name,36,false);$("dav").innerHTML=ava(m,name,96,true);$("dn").textContent=name;$("de").textContent=mail||"";$("pbtn").hidden=false;
   const soc=m.societies||[];
   $("soc").innerHTML=soc.length?soc.map(s=>`<a href="society.html?s=${slug(s)}" style="--c:${SOCC[s]||"#5AB7FF"}">${esc(s)}</a>`).join(""):'<span class="note">You haven\u2019t picked any societies yet.</span>';
   $("mem").hidden=false;
@@ -324,6 +327,8 @@ $("forgot").onclick=async()=>{
     msg("If that email has an account, a password reset link is on its way.");
   }catch(err){msg("Could not send the reset email. Try again.")}
 };
+
+const ava=(row,n,sz,big)=>row&&row.avatar&&window.chibi?(big?chibi.svg(row.avatar,sz):chibi.svg(row.avatar,sz,{crop:true})):av(n,big);
 
 /* profile drawer */
 const SOCC={"Anime Hub":"#5AB7FF","Hentai Paradise":"#FF6A73","Gamers Society":"#7BD88F","CineRealm":"#D9A441","NovelUp Book Club":"#B58CFF","SS Battle Ground":"#FF7A59","Music Society":"#FF6FAE","MMM Society":"#4DD0C4"};
