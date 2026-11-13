@@ -206,13 +206,13 @@ if(s&&id==="ss-battle-ground"){
   <div class="vs"><button id="bva" aria-pressed="false"><svg viewBox="0 0 80 80" aria-hidden="true"><defs><radialGradient id="gA"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#7FD0FF"/><stop offset="1" stop-color="#1E7FCB"/></radialGradient></defs><circle cx="40" cy="40" r="37" fill="none" stroke="#5AB7FF" stroke-width="1.5" opacity=".3"/><circle cx="40" cy="40" r="29" fill="none" stroke="#5AB7FF" stroke-width="2" opacity=".55"/><circle cx="40" cy="40" r="17" fill="url(#gA)"/></svg>Gojo</button><i>VS</i>
   <button id="bvb" aria-pressed="false"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="36" fill="#2A0F16" stroke="#C8323C" stroke-width="2"/><path d="M22 18L50 64M34 14L62 60M46 12L68 48" stroke="#C8323C" stroke-width="5" stroke-linecap="round"/><path d="M16 40L26 60" stroke="#FF6A73" stroke-width="3" stroke-linecap="round"/></svg>Sukuna</button></div>
   <div class="bar" id="bbar" aria-live="polite"></div></div>`);
-  const K="ss-battle";let v={a:128,b:116,pick:null};
-  try{const x=localStorage.getItem(K);if(x)v=JSON.parse(x)}catch(e){}
-  const A=document.getElementById("bva"),B=document.getElementById("bvb");
-  const draw=()=>{const t=v.a+v.b,pa=Math.round(v.a/t*100);
-    document.getElementById("bbar").innerHTML=`<span class="a" style="width:${pa}%">Gojo ${pa}%</span><span class="b" style="width:${100-pa}%">Sukuna ${100-pa}%</span>`;
-    A.setAttribute("aria-pressed",String(v.pick==="a"));B.setAttribute("aria-pressed",String(v.pick==="b"))};
-  const vote=k=>{if(v.pick===k)return;if(v.pick)v[v.pick]--;v[k]++;v.pick=k;try{localStorage.setItem(K,JSON.stringify(v))}catch(e){}draw()};
+  const K="ss-battle";let pick=null;
+  try{const raw=localStorage.getItem(K);if(raw){try{const o=JSON.parse(raw);pick=(o&&o.pick)||null}catch(e){pick=(raw==="a"||raw==="b")?raw:null}}}catch(e){}
+  const A=document.getElementById("bva"),B=document.getElementById("bvb"),note=document.getElementById("bbar");
+  const draw=()=>{A.setAttribute("aria-pressed",String(pick==="a"));B.setAttribute("aria-pressed",String(pick==="b"));
+    note.className="meta";note.style.margin="4px 0 0";
+    note.textContent=pick?"You picked "+(pick==="a"?"Gojo":"Sukuna")+". Shared community results will appear here when live polls are switched on.":"Pick a side. Shared community results will appear here when live polls are switched on."};
+  const vote=k=>{pick=k;try{localStorage.setItem(K,k)}catch(e){}draw()};
   A.onclick=()=>vote("a");B.onclick=()=>vote("b");draw();
 }
 try{if(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member"))document.getElementById("lg").textContent="My account"}catch(e){}
