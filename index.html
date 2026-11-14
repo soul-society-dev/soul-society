@@ -149,6 +149,35 @@ section>.wrap>h2{font-size:clamp(1.6rem,4.5vw,2.3rem);margin-bottom:8px}
 .latest{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:5px solid #D9A441;padding:14px 18px;margin-bottom:24px;text-decoration:none;color:inherit}.latest[hidden]{display:none}.latest .tg{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}.latest b{flex:1}.latest .mr{color:var(--blue);font-weight:700;font-size:.9rem}
 .tl{display:inline-block;margin-left:20px;color:#E9ECF5;font-weight:700;text-decoration:underline;text-underline-offset:4px}.tl:hover{color:#5AB7FF}
 @media (max-width:760px){.tl{display:block;margin:16px 0 0}}
+.erow{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.erow a{width:46px;height:46px;border-radius:50%;border:2px solid var(--c);color:var(--c);display:grid;place-items:center;background:rgba(255,255,255,.06);transition:transform .2s,box-shadow .2s}
+.erow a:hover{transform:translateY(-2px);box-shadow:0 0 18px -2px var(--c)}.erow svg{width:24px;height:24px}
+.sgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.scard{display:flex;flex-direction:column;gap:8px;padding:22px;border:1px solid var(--line);border-top:3px solid var(--c);border-radius:18px;background:var(--card);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);text-decoration:none;color:inherit;transition:transform .25s,box-shadow .25s,border-color .25s}
+.scard:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 16px 40px -14px var(--c)}
+.scard .se{width:54px;height:54px;border-radius:50%;border:2px solid var(--c);color:var(--c);display:grid;place-items:center;background:rgba(255,255,255,.05)}.scard .se svg{width:30px;height:30px}
+.scard h3{font-size:1.1rem}.scard p{margin:0;color:var(--muted);font-size:.93rem;flex:1}.scard .go{color:var(--c);font-weight:700;font-size:.9rem}
+.badge18{align-self:flex-start;font-size:.78rem;font-weight:700;border:1px solid var(--c);color:var(--c);border-radius:99px;padding:1px 10px}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.hc{display:flex;flex-direction:column;gap:8px;padding:22px;border:1px solid var(--line);border-top:3px solid var(--c);border-radius:18px;background:var(--card);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);text-decoration:none;color:inherit;transition:transform .25s,box-shadow .25s,border-color .25s;height:100%}
+a.hc:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 16px 40px -14px var(--c)}
+.hc h3{font-size:1.15rem}.hc p{margin:0;color:var(--muted);font-size:.93rem;flex:1}.hc .go{color:var(--c);font-weight:700;font-size:.9rem}
+.evl{display:grid;gap:14px}
+.evr{display:flex;gap:18px;align-items:center;padding:16px 20px;border:1px solid var(--line);border-radius:16px;background:var(--card);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.evd{min-width:76px;text-align:center;font-family:"Shippori Mincho B1",Georgia,serif;font-weight:800;color:#F0C97A;line-height:1.15}
+.evr h3{font-size:1.05rem}.evr p{margin:2px 0 0;color:var(--muted);font-size:.9rem}.evr .grow{flex:1;min-width:0}
+.evr a{font-weight:700;color:#F0C97A;text-decoration:none;border-bottom:1px solid #F0C97A;white-space:nowrap}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.wc{padding:24px 22px;border:1px solid var(--line);border-radius:18px;background:var(--card);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.wc .wi{display:flex;align-items:center;gap:6px;min-height:62px;margin-bottom:10px;font-size:2rem}
+.wc .wi2 span{width:40px;height:40px;border-radius:50%;border:2px solid var(--c);color:var(--c);display:grid;place-items:center}.wc .wi2 svg{width:22px;height:22px}
+.wc h3{font-size:1.1rem;margin-bottom:6px}.wc p{margin:0;color:var(--muted);font-size:.93rem}
+.cta2{text-align:center;padding:44px 24px;border:1px solid rgba(185,166,255,.25);border-radius:22px;background:linear-gradient(160deg,rgba(44,34,86,.9),rgba(16,13,40,.9))}
+.cta2 h2{font-size:clamp(1.7rem,5vw,2.4rem);margin-bottom:10px}.cta2 p{color:var(--muted);max-width:34em;margin:0 auto 22px}
+.cta2 .btn{display:inline-block;text-decoration:none;padding:14px 30px;border-radius:10px;font-weight:700;background:linear-gradient(135deg,#F6D98B,#DDA845);color:#2A1D05;box-shadow:0 8px 22px -8px rgba(232,182,92,.65)}
+.tl2{display:block;margin-top:16px;color:#C9CFE3;text-decoration:none;border-bottom:1px solid transparent;width:max-content;margin-left:auto;margin-right:auto}.tl2:hover{color:#fff;border-bottom-color:#B9A6FF}
+@media (max-width:640px){.evr{flex-wrap:wrap}.evr a{margin-left:94px}}
+@media (prefers-reduced-motion:reduce){.scard,.hc,.erow a{transition:none}.scard:hover,a.hc:hover,.erow a:hover{transform:none}}
 /* WARM SEIREITEI THEME START */
 :root:root:root{--bg:#0B0B1E;--ink:#F1EBFA;--card:rgba(26,21,52,.62);--muted:#ADA7CC;--line:rgba(185,166,255,.2);--blue:#B9A6FF;--gold:#E8B65C;--red:#FF7A8A;color-scheme:dark}
 body{background:radial-gradient(1000px 620px at 88% -6%,rgba(232,182,92,.14),transparent 62%),radial-gradient(900px 700px at -4% 34%,rgba(185,166,255,.12),transparent 60%),radial-gradient(800px 600px at 60% 100%,rgba(120,80,170,.14),transparent 60%),#0B0B1E;color:var(--ink)}
@@ -185,6 +214,8 @@ main{animation:fadeUp .6s ease both}
 @media (prefers-reduced-motion:reduce){main{animation:none}.soc,.ecard,.door,.fi,.btn{transition:none}.soc:hover,.ecard:hover,.door:hover,.btn:hover{transform:none}}
 /* WARM SEIREITEI THEME END */
 </style>
+<script src="emblems.js"></script>
+<script src="chibi.js"></script>
 </head>
 <body data-page="home">
 <div id="hdr"></div>
@@ -192,26 +223,56 @@ main{animation:fadeUp .6s ease both}
   <h1>Soul Society</h1>
   <div class="tag">One Realm. Many Worlds. One Community.</div>
   <p>Anime, games, film, books, music and manga. Eight societies, one community.</p>
-  <a class="btn" id="heroBtn" href="join.html">Join the community</a><a class="tl" href="societies.html">Explore the societies</a>
+  <a class="btn" id="heroBtn" href="join.html">Join the community</a><a class="tl" href="#societies">Explore the societies</a>
+  <div class="erow" id="erow" aria-label="The eight societies"></div>
 </div></div>
 <main>
-<section><div class="wrap narrow">
-  <h2>About Soul Society</h2>
-  <p class="lead">Interest groups often live in separate chats that are hard to find and easy to miss. Soul Society brings them together, so you can explore what you love, take part in events and meet other members.</p>
+<section id="societies"><div class="wrap">
+  <h2>Explore the societies</h2>
+  <p class="sub">Eight communities, each with its own personality. Step into the one that fits you.</p>
+  <div class="sgrid2" id="sgrid"></div>
+  <a class="more" href="societies.html">See all societies</a>
 </div></section>
 
-<section><div class="wrap">
-  <a class="latest" id="latest" href="happening.html" hidden><span class="tg">Latest</span><b id="latestT"></b><span class="mr">See updates</span></a>
-  <div class="spot">
-    <span class="label">Announcement</span>
-    <h2>Gojo vs Sukuna: voting is underway</h2>
-    <p>Who wins? Pick a side and see how the community is voting. Results update on the Battle Ground page.</p>
-    <div class="vsrow">
-      <div><svg viewBox="0 0 80 80" aria-hidden="true"><defs><radialGradient id="hA"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#7FD0FF"/><stop offset="1" stop-color="#1E7FCB"/></radialGradient></defs><circle cx="40" cy="40" r="37" fill="none" stroke="#5AB7FF" stroke-width="1.5" opacity=".3"/><circle cx="40" cy="40" r="29" fill="none" stroke="#5AB7FF" stroke-width="2" opacity=".55"/><circle cx="40" cy="40" r="17" fill="url(#hA)"/></svg>Gojo</div>
-      <i>VS</i>
-      <div><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="36" fill="#2A0F16" stroke="#C8323C" stroke-width="2"/><path d="M22 18L50 64M34 14L62 60M46 12L68 48" stroke="#C8323C" stroke-width="5" stroke-linecap="round"/><path d="M16 40L26 60" stroke="#FF6A73" stroke-width="3" stroke-linecap="round"/></svg>Sukuna</div>
-    </div>
-    <a class="btn" href="society.html?s=ss-battle-ground">Cast your vote</a>
+<section id="happening"><div class="wrap">
+  <h2>What’s happening in Soul Society</h2>
+  <p class="sub">Polls, battles, games and the latest from the community.</p>
+  <div class="hgrid">
+    <a class="hc" style="--c:#FF7A59" href="society.html?s=ss-battle-ground"><span class="tagc">Community poll</span><h3>Gojo vs Sukuna</h3><p>Who wins? Pick a side on the Battle Ground and explain your choice.</p><span class="go">Vote now</span></a>
+    <a class="hc" style="--c:#7BD88F" href="games.html"><span class="tagc">Games Arena</span><h3>Play, score, climb</h3><p>Trivia, character guessing, emoji challenges, word chains, episode showdowns and friendly duels.</p><span class="go">Enter the Arena</span></a>
+    <div id="hTx"></div>
+    <div id="hKa"></div>
+    <a class="hc" style="--c:#B58CFF" href="join.html"><span class="tagc">Society discussions</span><h3>Talk it out</h3><p>Every society has its own discussion board for takes, reviews and recommendations. Members read and post.</p><span class="go">Join to take part</span></a>
+    <a class="hc" style="--c:#D9A441" href="happening.html"><span class="tagc">Challenges and contests</span><h3>Compete for rewards</h3><p>Tournaments and challenges are announced here, with Soul Points and badges for winners.</p><span class="go">See announcements</span></a>
+  </div>
+</div></section>
+
+<section id="events"><div class="wrap">
+  <h2>Upcoming events</h2>
+  <p class="sub">Only real, scheduled events appear here.</p>
+  <div class="evl" id="evl"><p class="sub">Loading…</p></div>
+  <a class="more" href="happening.html">All events and announcements</a>
+</div></section>
+
+<section id="why"><div class="wrap">
+  <h2>Why join Soul Society?</h2>
+  <p class="sub">Everything you need to belong to a living anime community.</p>
+  <div class="wgrid">
+    <div class="wc"><div class="wi" id="wChibi"></div><h3>Customisable avatars</h3><p>Design your own chibi character, then unlock new looks with Soul Points.</p></div>
+    <div class="wc"><div class="wi wi2" id="wEmb"></div><h3>Eight unique societies</h3><p>From anime and games to books, film, music and manga. Find where you belong.</p></div>
+    <div class="wc"><div class="wi">🎮</div><h3>Games and competitions</h3><p>Trivia, guessing games, word chains and friendly duels with your friends.</p></div>
+    <div class="wc"><div class="wi">✨</div><h3>Soul Points and rewards</h3><p>Earn Soul Points for playing and taking part, then spend them in the Character shop.</p></div>
+    <div class="wc"><div class="wi">🏅</div><h3>Badges and achievements</h3><p>Unlock collectible badges and watch your progress grow.</p></div>
+    <div class="wc"><div class="wi">🎤</div><h3>Events and activities</h3><p>Join karaoke nights, challenges and community events.</p></div>
+  </div>
+</div></section>
+
+<section id="joinnow"><div class="wrap">
+  <div class="cta2">
+    <h2>Step into Soul Society</h2>
+    <p>Membership is by application and reviewed by our administrators. Tell us about yourself and the societies you like, and we’ll send your approval code.</p>
+    <a class="btn" id="joinBtn" href="join.html">Apply to join</a>
+    <a class="tl2" id="signLink" href="member.html">Already a member? Sign in</a>
   </div>
 </div></section>
 </main>
@@ -296,17 +357,157 @@ if(jf){
 
 </script>
 <script>
-(async()=>{
-const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP";
+try{if(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member")){const b=document.getElementById("heroBtn");b.textContent="Go to my account";b.href="member.html"}}catch(e){}
+</script>
+<script>
+/* SS BELL */
+(function(){
+if(window.__ssBell)return;window.__ssBell=1;
+const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP",SK="ss-member";
+const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ICON={sp:"\u2728",badge:"\u{1F3C5}",event:"\u{1F4C5}",announcement:"\u{1F4E3}",update:"\u{1F514}",result:"\u{1F3C6}"};
+const ago=d=>{const s=(Date.now()-new Date(d).getTime())/1000;if(s<60)return"just now";if(s<3600)return Math.floor(s/60)+" min ago";if(s<86400)return Math.floor(s/3600)+" h ago";return new Date(d).toLocaleDateString()};
+const safeLink=l=>(l&&/^[A-Za-z0-9_.\-]+(\?[A-Za-z0-9_=&.\-]*)?(#[A-Za-z0-9_\-]*)?$/.test(l))?l:null;
+let ses=null,rows=[],btn,cnt,panel,list;
+async function getSes(){
   try{
-    const r=await fetch(SB+"/rest/v1/announcements?select=title&order=created_at.desc&limit=1",{headers:{apikey:KEY}});
+    let bucket=localStorage,raw=localStorage.getItem(SK);
+    if(!raw){bucket=sessionStorage;raw=sessionStorage.getItem(SK)}
+    if(!raw)return null;
+    const rt=JSON.parse(raw).rt;if(!rt)return null;
+    const r=await fetch(SB+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:rt})});
+    if(!r.ok)return null;
     const d=await r.json();
-    if(Array.isArray(d)&&d[0]){document.getElementById("latestT").textContent=d[0].title;document.getElementById("latest").hidden=false}
+    try{bucket.setItem(SK,JSON.stringify({rt:d.refresh_token}))}catch(e){}
+    return d.user&&d.user.id?{tok:d.access_token,uid:d.user.id}:null;
+  }catch(e){return null}
+}
+const H=()=>({apikey:KEY,Authorization:"Bearer "+ses.tok,"Content-Type":"application/json"});
+async function load(){
+  try{
+    const r=await fetch(SB+"/rest/v1/notifications?select=id,kind,title,body,link,read,created_at&order=created_at.desc&limit=30",{headers:H()});
+    const d=await r.json();
+    if(Array.isArray(d)){rows=d;draw()}
   }catch(e){}
+}
+function draw(){
+  const u=rows.filter(x=>!x.read).length;
+  cnt.textContent=u>9?"9+":String(u);cnt.hidden=u===0;
+  btn.setAttribute("aria-label","Notifications"+(u?", "+u+" unread":""));
+  list.innerHTML=rows.length?rows.map(x=>`<button type="button" class="bn-i${x.read?"":" un"}" data-id="${esc(x.id)}" data-l="${esc(safeLink(x.link)||"")}"><span class="bn-ic" aria-hidden="true">${ICON[x.kind]||"\u{1F514}"}</span><span class="bn-t"><b>${esc(x.title)}</b>${x.body?`<span>${esc(x.body)}</span>`:""}<em>${esc(ago(x.created_at))}</em></span></button>`).join(""):'<p class="bn-e">No notifications yet.</p>';
+}
+async function markRead(id){
+  const row=rows.find(x=>x.id===id);if(row)row.read=true;draw();
+  try{await fetch(SB+"/rest/v1/notifications?id=eq."+encodeURIComponent(id),{method:"PATCH",headers:{...H(),Prefer:"return=minimal"},body:JSON.stringify({read:true})})}catch(e){}
+}
+async function markAll(){
+  rows.forEach(x=>x.read=true);draw();
+  try{await fetch(SB+"/rest/v1/notifications?read=eq.false",{method:"PATCH",headers:{...H(),Prefer:"return=minimal"},body:JSON.stringify({read:true})})}catch(e){}
+}
+function toggle(force){
+  const open=force!==undefined?force:panel.hidden;
+  panel.hidden=!open;btn.setAttribute("aria-expanded",String(open));
+  if(open)load();
+}
+function build(){
+  const st=document.createElement("style");
+  st.textContent=`.bellw{position:relative;display:inline-flex;margin-left:12px;order:9}
+.bell{position:relative;width:40px;height:40px;border-radius:50%;border:1px solid rgba(185,166,255,.35);background:rgba(255,255,255,.05);color:#F1EBFA;cursor:pointer;display:grid;place-items:center;padding:0;transition:border-color .2s,box-shadow .2s}
+.bell:hover,.bell[aria-expanded="true"]{border-color:#E8B65C;box-shadow:0 0 14px rgba(232,182,92,.4)}
+.bell svg{width:20px;height:20px}
+.bc{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#E8B65C;color:#2A1D05;font:700 .72rem/18px system-ui,sans-serif;text-align:center}
+.bc[hidden]{display:none}
+.bpanel{position:fixed;top:64px;right:12px;width:min(380px,94vw);max-height:72vh;overflow:auto;z-index:1000;background:rgba(20,16,44,.97);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(185,166,255,.28);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.bpanel[hidden]{display:none}
+.bn-h{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(185,166,255,.2);color:#F1EBFA;font-weight:700}
+.bn-h button{background:none;border:0;color:#E8B65C;font:inherit;font-size:.88rem;cursor:pointer;padding:0}
+.bn-i{display:flex;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid rgba(185,166,255,.12);padding:12px 16px;color:#F1EBFA;cursor:pointer;font:inherit}
+.bn-i:hover{background:rgba(255,255,255,.05)}.bn-i.un{background:rgba(232,182,92,.08)}
+.bn-i.un .bn-t b::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#E8B65C;margin-right:8px}
+.bn-ic{font-size:1.3rem;line-height:1.3}.bn-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.bn-t b{font-weight:700}.bn-t span{color:#ADA7CC;font-size:.88rem;word-break:break-word}.bn-t em{color:#8F89B3;font-size:.78rem;font-style:normal}
+.bn-e{padding:22px 16px;margin:0;color:#ADA7CC;text-align:center}
+@media (max-width:760px){.bellw{order:0;margin-left:auto}.bpanel{top:60px}}`;
+  document.head.appendChild(st);
+  const hdr=document.querySelector(".top");if(!hdr)return false;
+  const target=hdr.querySelector(".hr")||hdr.querySelector(".wrap")||hdr.querySelector(".in")||hdr;
+  const w=document.createElement("div");w.className="bellw";
+  w.innerHTML='<button class="bell" type="button" aria-label="Notifications" aria-expanded="false" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="bc" hidden>0</span></button><div class="bpanel" hidden role="dialog" aria-label="Notifications"><div class="bn-h"><span>Notifications</span><button type="button" class="bn-all">Mark all read</button></div><div class="bn-l"></div></div>';
+  const menu=target.querySelector("#menuBtn");
+  if(menu)target.insertBefore(w,menu);
+  else if(target.classList.contains("hr"))target.insertBefore(w,target.firstChild);
+  else target.appendChild(w);
+  btn=w.querySelector(".bell");cnt=w.querySelector(".bc");panel=w.querySelector(".bpanel");list=w.querySelector(".bn-l");
+  btn.addEventListener("click",e=>{e.stopPropagation();toggle()});
+  w.querySelector(".bn-all").addEventListener("click",markAll);
+  list.addEventListener("click",e=>{
+    const b=e.target.closest(".bn-i");if(!b)return;
+    markRead(b.dataset.id);
+    if(b.dataset.l)setTimeout(()=>{location.href=b.dataset.l},120);
+  });
+  document.addEventListener("click",e=>{if(!panel.hidden&&!w.contains(e.target))toggle(false)});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden)toggle(false)});
+  return true;
+}
+async function init(){
+  await new Promise(r=>setTimeout(r,1200));
+  ses=await getSes();if(!ses)return;
+  if(!build())return;
+  load();setInterval(()=>{if(document.visibilityState==="visible")load()},45000);
+  window.addEventListener("ss-refresh",()=>setTimeout(load,1500));
+}
+init();
 })();
 </script>
 <script>
-try{if(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member")){const b=document.getElementById("heroBtn");b.textContent="Go to my account";b.href="member.html"}}catch(e){}
+(function(){
+const SB="https://fehrldvrjgbkuqgrhjmg.supabase.co",KEY="sb_publishable_ihQ-c89K2hsj1w0bwDh8fA_67q3EIzP";
+const $=id=>document.getElementById(id);
+const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const SOCD=[["anime-hub","Anime Hub","#5AB7FF","Series, characters, recommendations and anime talk."],["hentai-paradise","Hentai Paradise","#FF6A73","Members 18+ only. Access after verification."],["gamers-society","Gamers Society","#7BD88F","Game talk, competitions and finding players."],["cinerealm","CineRealm","#D9A441","Movies and TV: reviews, picks and discussion."],["novelup-book-club","NovelUp Book Club","#B58CFF","Share books, discuss stories, join reading activities."],["ss-battle-ground","SS Battle Ground","#FF7A59","Compare anime characters, debate and vote on who wins."],["music-society","Music Society","#FF6FAE","Recommendations, artists and karaoke sessions."],["mmm-society","MMM Society","#4DD0C4","Manga, manhwa and manhua: lists, reviews, chapter talk."]];
+const emb=s=>(window.SSEMB&&SSEMB[s])||"";
+const cleanT=t=>String(t||"").replace(/[*_`\\]/g,"").replace(/\s+/g," ").trim();
+const clip=(t,n)=>{t=cleanT(t);return t.length>n?t.slice(0,n-1)+"\u2026":t};
+const dfmt=s=>new Date(s).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});
+const ymd=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+
+$("erow").innerHTML=SOCD.map(s=>`<a style="--c:${s[2]}" href="society.html?s=${s[0]}" aria-label="${esc(s[1])}" title="${esc(s[1])}">${emb(s[0])}</a>`).join("");
+$("sgrid").innerHTML=SOCD.map(s=>`<a class="scard" style="--c:${s[2]}" href="society.html?s=${s[0]}"><span class="se">${emb(s[0])}</span><h3>${esc(s[1])}</h3>${s[0]==="hentai-paradise"?'<span class="badge18">Age-restricted</span>':""}<p>${esc(s[3])}</p><span class="go">Explore</span></a>`).join("");
+$("wEmb").innerHTML=SOCD.slice(0,4).map(s=>`<span style="--c:${s[2]}">${emb(s[0])}</span>`).join("");
+if(window.chibi){
+  const L=[{skin:1,hair:"spiky",hairColor:5,eyes:"round",eyeColor:1,mouth:"smile",outfit:"hoodie",outfitColor:0,acc:"none",bg:"lavender"},{skin:3,hair:"bob",hairColor:7,eyes:"happy",eyeColor:4,mouth:"open",outfit:"tee",outfitColor:2,acc:"none",bg:"dawn"},{skin:0,hair:"short",hairColor:3,eyes:"sharp",eyeColor:2,mouth:"cat",outfit:"hoodie",outfitColor:1,acc:"none",bg:"teal"}];
+  $("wChibi").innerHTML=L.map(a=>chibi.svg(a,58,{crop:true})).join("");
+}else $("wChibi").textContent="\U0001F9D1";
+
+/* real data only */
+(async()=>{
+  try{
+    const r=await fetch(SB+"/rest/v1/announcements?select=*&order=created_at.desc&limit=1",{headers:{apikey:KEY}});
+    const d=await r.json();
+    $("hTx").innerHTML=(r.ok&&Array.isArray(d)&&d[0])?`<a class="hc" style="--c:#FF6FAE" href="happening.html"><span class="tagc">Latest transmission</span><h3>${esc(clip(d[0].title,70))}</h3><p>${esc(clip(d[0].body,110)||"Read the full announcement.")}</p><span class="go">Read more \u00b7 ${esc(dfmt(d[0].created_at))}</span></a>`
+      :'<div class="hc" style="--c:#FF6FAE"><span class="tagc">Transmissions</span><h3>Nothing new yet</h3><p>Announcements from the admins will appear here.</p></div>';
+  }catch(e){$("hTx").innerHTML=""}
+})();
+(async()=>{
+  try{
+    const r=await fetch(SB+"/rest/v1/karaoke_sessions?select=id,title,theme,starts_at,status&status=in.(upcoming,live)&order=starts_at.asc&limit=1",{headers:{apikey:KEY}});
+    const d=await r.json();
+    if(r.ok&&Array.isArray(d)&&d[0]){const s=d[0];$("hKa").innerHTML=`<a class="hc" style="--c:#FF6FAE" href="karaoke.html"><span class="tagc">${s.status==="live"?"Live now":"Next karaoke session"}</span><h3>${esc(clip(s.title,60))}</h3><p>${esc(s.theme||"Open theme")} \u00b7 ${esc(new Date(s.starts_at).toLocaleString(undefined,{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}))}</p><span class="go">Enter the lounge</span></a>`}
+    else $("hKa").innerHTML='<a class="hc" style="--c:#FF6FAE" href="karaoke.html"><span class="tagc">Karaoke Lounge</span><h3>Sing with the community</h3><p>No session is scheduled yet. Sessions and song requests will appear here.</p><span class="go">Visit the lounge</span></a>';
+  }catch(e){$("hKa").innerHTML=""}
+})();
+(async()=>{
+  try{
+    const r=await fetch(SB+"/rest/v1/events?select=*&event_date=gte."+ymd()+"&order=event_date.asc&limit=3",{headers:{apikey:KEY}});
+    const d=await r.json();
+    if(!r.ok||!Array.isArray(d))throw new Error("x");
+    $("evl").innerHTML=d.length?d.map(x=>{const dt=new Date(x.event_date+"T00:00:00");return `<div class="evr"><div class="evd">${esc(dt.toLocaleDateString(undefined,{month:"short"}))}<br><span style="font-size:1.7rem">${dt.getDate()}</span></div><div class="grow"><h3>${esc(clip(x.title,80))}</h3><p>${esc(x.society||"All societies")}${x.details?" \u00b7 "+esc(clip(x.details,90)):""}</p></div><a href="happening.html">View details</a></div>`}).join(""):'<div class="evr"><div class="grow"><h3>No events are scheduled right now</h3><p>New events will appear here as soon as the admins add them.</p></div></div>';
+  }catch(e){$("evl").innerHTML='<p class="sub">Events couldn\u2019t be loaded right now.</p>'}
+})();
+
+/* signed-in visitors get shortcuts instead of the join call */
+try{if(localStorage.getItem("ss-member")||sessionStorage.getItem("ss-member")){$("joinBtn").textContent="Go to my dashboard";$("joinBtn").href="member.html";$("signLink").style.display="none"}}catch(e){}
+})();
 </script>
 </body>
 </html>
