@@ -211,6 +211,7 @@ main{animation:fadeUp .6s ease both}
 @media (prefers-reduced-motion:reduce){main{animation:none}.soc,.ecard,.door,.fi,.btn{transition:none}.soc:hover,.ecard:hover,.door:hover,.btn:hover{transform:none}}
 /* WARM SEIREITEI THEME END */
 </style>
+<script src="chibi.js"></script>
 </head>
 <body data-page="games">
 <div id="hdr"></div>
@@ -375,13 +376,22 @@ async function saveScore(score){
 }
 async function loadBoard(){
   try{
-    const r=await fetch(SB+"/rest/v1/scores?select=player,score,created_at&game=eq."+GAME+"&order=score.desc,created_at.asc&limit=100",{headers:{apikey:KEY}});
-    const rows=await r.json();
-    if(!Array.isArray(rows))throw new Error("rows");
-    const seen=new Set(),top=[];
-    for(const x of rows){if(!seen.has(x.player)){seen.add(x.player);top.push(x)}if(top.length===10)break}
-    $("lb").innerHTML=top.length?top.map((x,i)=>`<div class="lbrow"><span class="rk">${i+1}</span>${av(x.player)}<span class="nm">${esc(x.player)}</span><span class="pt">${esc(x.score)}</span></div>`).join(""):'<p class="sub">No scores yet. Be the first on the board.</p>';
-  }catch(e){$("lb").innerHTML='<p class="sub">The leaderboard isn\u2019t available right now.</p>'}
+    let top=null;
+    try{
+      const r=await fetch(SB+"/rest/v1/rpc/leaderboard",{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify({p_game:GAME})});
+      const d=await r.json();
+      if(r.ok&&Array.isArray(d))top=d;
+    }catch(e){}
+    if(!top){
+      const r=await fetch(SB+"/rest/v1/scores?select=player,score,created_at&game=eq."+GAME+"&order=score.desc,created_at.asc&limit=100",{headers:{apikey:KEY}});
+      const rows=await r.json();
+      if(!Array.isArray(rows))throw new Error("rows");
+      const seen=new Set();top=[];
+      for(const x of rows){if(!seen.has(x.player)){seen.add(x.player);top.push(x)}if(top.length===10)break}
+    }
+    const pic=x=>x.avatar&&window.chibi?chibi.svg(x.avatar,34,{crop:true}):av(x.player);
+    $("lb").innerHTML=top.length?top.map((x,i)=>`<div class="lbrow"><span class="rk">${i+1}</span>${pic(x)}<span class="nm">${esc(x.player)}</span><span class="pt">${esc(x.score)}</span></div>`).join(""):'<p class="sub">No scores yet. Be the first on the board.</p>';
+  }catch(e){$("lb").innerHTML='<p class="sub">The leaderboard isn\\u2019t available right now.</p>'}
 }
 (async()=>{
   const ses=await getSes();
